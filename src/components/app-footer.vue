@@ -7,6 +7,9 @@
       <i class="iconfont icon-listview tab-link"></i>
     </router-link>
     <router-link tag="div" class="tab-item" to="/user-info">
+      <i class="iconfont icon-dati tab-link"></i>
+    </router-link>
+    <router-link tag="div" class="tab-item" to="/user-info">
       <i class="iconfont icon-gerenfill tab-link"></i>
     </router-link>
   </div>

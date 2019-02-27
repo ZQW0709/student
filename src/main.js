@@ -7,7 +7,9 @@ import fastclick from 'fastclick'
 import MintUI from 'mint-ui'
 import 'mint-ui/lib/style.css'
 
-import './styles/index.scss'
+import './assets/iconfont/iconfont.css'
+
+import './styles/index.scss'  //其中包含了iconfont
 
 Vue.config.productionTip = false
 fastclick.attach(document.body) // 解决移动端点击延迟的问题

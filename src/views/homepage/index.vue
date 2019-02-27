@@ -8,11 +8,14 @@
     </mt-header>
     <div class="text">
       <p>欢迎! <span class="user-name">{{ userInfo.username }}</span></p><br>
-      <p>你已成功约学 <span class="count">{{ userInfo.ordersTotal }}</span> 次</p>
-      <p>获得称号: <span class="title">{{ title }}</span></p>
+      <!-- <p>你已成功约学 <span class="count">{{ userInfo.ordersTotal }}</span> 次</p> -->
+      <!-- <p>你已成功答题 <span class="count">{{ userInfo.ordersTotal }}</span> 次</p> -->
+
+      <!-- <p>获得称号: <span class="title">{{ title }}</span></p> -->
     </div>
     <div class="opt">
-      <button @click="newOrder">约<span class="right-arrow">▶</span></button>
+      <!-- <button @click="newOrder">约<span class="right-arrow">▶</span></button> -->
+      <button >答<span class="right-arrow">▶</span></button>
     </div>
     <router-view></router-view>
     <app-footer class="main-footer"></app-footer>
@@ -36,50 +39,51 @@ export default {
       unReadCnt: 0
     }
   },
-  computed: {
-    title() {
-      if (this.userInfo.ordersTotal === 0) {
-        return '新人'
-      } else if (this.userInfo.ordersTotal < 10) {
-        return '初学者'
-      } else if (this.userInfo.ordersTotal < 30) {
-        return '学霸'
-      } else {
-        return '学神'
-      }
-    }
-  },
+  // computed: {
+  //   title() {
+  //     if (this.userInfo.ordersTotal === 0) {
+  //       return '新人'
+  //     } else if (this.userInfo.ordersTotal < 10) {
+  //       return '初学者'
+  //     } else if (this.userInfo.ordersTotal < 30) {
+  //       return '学霸'
+  //     } else {
+  //       return '学神'
+  //     }
+  //   }
+  // },
   components: {
     AppHeader,
     AppFooter
   },
   methods: {
-    seeUnreadMsg() {
-      MessageBox.alert(`你有 ${this.unReadCnt} 个邀约被人接受啦！可去个人中心查看详情`).then(() => {
-        this.unReadCnt = 0
-        readAllUnreadOrder()
-      })
-    },
-    newOrder() {
-      if (!this.userInfo.hasContactInfo) {
-        Toast('请先填写至少一种联系方式才可以发起邀约')
-        return
-      }
-      this.$router.push('/homepage/new-order')
-    }
+    // seeUnreadMsg() {
+    //   MessageBox.alert(`你有 ${this.unReadCnt} 个邀约被人接受啦！可去个人中心查看详情`).then(() => {
+    //     this.unReadCnt = 0
+    //     readAllUnreadOrder()
+    //   })
+    // },
+    // newOrder() {
+    //   if (!this.userInfo.hasContactInfo) {
+    //     Toast('请先填写至少一种联系方式才可以发起邀约')
+    //     return
+    //   }
+    //   this.$router.push('/homepage/new-order')
+    // }
   },
-  // created() {
-  //   getUserInfo().then(res => {
-  //     if (res.success) {
-  //       this.userInfo = res.data
-  //       queryOrder({ creatorName: this.userInfo.username, status: orderStatus.RECEIVED_UNREAD }).then(res => {
-  //         this.unReadCnt = res.data.length
-  //       })
-  //     } else {
-  //       Toast(res.msg)
-  //     }
-  //   })
-  // }
+  created() {
+    // getUserInfo().then(res => {
+    //   if (res.success) {
+    //     this.userInfo = res.data
+    //     queryOrder({ creatorName: this.userInfo.username, status: orderStatus.RECEIVED_UNREAD }).then(res => {
+    //       this.unReadCnt = res.data.length
+    //     })
+    //   } else {
+    //     Toast(res.msg)
+    //   }
+    // })
+
+  }
 }
 </script>
 

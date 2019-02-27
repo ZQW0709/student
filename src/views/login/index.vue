@@ -5,7 +5,7 @@
       <i class="iconfont icon-shouye" @click="back"></i>
     </header>
     <div class="user-form">
-      <p class="input"><input type="text" placeholder="邮箱" v-model="email" ></p>
+      <p class="input"><input type="text" placeholder="账号" v-model="login" ></p>
       
       <!-- 注册 -->
       <template v-if="type === 'register'">
@@ -21,16 +21,16 @@
       <template v-else-if="this.type === 'forgetPwd'">
         <p class="input"><input type="password" placeholder="新密码（不少于6位）" v-model="password"></p>
         <p class="input"><input type="password" placeholder="再次输入密码" v-model="pwdRepeat"></p>
-        <p class="input verification-code">
+        <!-- <p class="input verification-code">
           <input type="text" placeholder="验证码" v-model="pin">
           <button @click="getPinCode">发送验证码</button>
-        </p>
+        </p> -->
         <button class="submit-btn" @click="resetPassword">重 置</button>
       </template>
       <!-- 登录 -->
       <template v-else>
         <p class="input"><input type="password" placeholder="密码" v-model="password"></p>
-        <button class="submit-btn" @click="login">登 录</button>
+        <button class="submit-btn" @click="denglu">登 录</button>
       </template>
     </div>
     <div class="tips">
@@ -45,15 +45,15 @@
 <script>
 import qs from 'qs'
 import {  register, resetUserPwd, sendPinCode } from 'api/user'
-import { studentLogin } from '@/api/login'
+import { studentLogin,updataPwd } from '@/api/login'
 import { commonRegex } from '@/utils'
 import { Toast } from 'mint-ui'
 export default {
   data() {
     return {
-      type: 'login',
+      type: '',
       password: '',
-      email: '',
+      login: '',
       pwdRepeat: '',
       pin: ''
     }
@@ -62,24 +62,20 @@ export default {
     back() {
       this.$router.back()
     },
-    login() {
-      // if (!this._isValid()) return
+    denglu() {
+      if (!this._isValid()) return
       let params = {
-        login: this.email,
+        login: this.login,
         pwd: this.password
       }
       params = qs.stringify(params)
-          // this.$router.push({name: '/homepage'})
-      // console.log(this.$router.push({name: '/homepage'})
-
       studentLogin(params)
+
       .then(res => {
-        if(res.data !== undefined) {
-          // this.$router.push('/homepage')
-                   this.$router.push('/homepage')
-
-          // this.$router.push('/homepage')
-
+        console.log(res.data)
+        if(res.data.length != 0) {
+          sessionStorage.localLogin=JSON.stringify(res.data);
+          this.$router.push('/homepage')
         } 
         else {
           Toast({
@@ -94,7 +90,7 @@ export default {
     },
     register() {
       if (!this._isValid()) return
-      register({ email: this.email, password: this.password, pin: this.pin }).then(res => {
+      register({ login: this.login, password: this.password, pin: this.pin }).then(res => {
         if (res.success) {
           Toast(res.msg)
           this.$router.push('/homepage')
@@ -108,7 +104,14 @@ export default {
     resetPassword() {
       if (!this._isValid()) return
       this.$root.$data.setLoading(true)
-      resetUserPwd({ email: this.email, password: this.password, pin: this.pin }).then(res => {
+      // resetUserPwd({ login: this.login, password: this.password, pin: this.pin }).then(res => {
+        let params = {
+          login: this.login,
+          pwd: this.password
+        }
+        params = qs.stringify(params)
+      updataPwd(params)
+      .then(res => {
         this.$root.$data.setLoading(false)
         if (res.success) {
           Toast(res.msg)
@@ -122,12 +125,12 @@ export default {
       })
     },
     getPinCode() {
-      if (!this.email) {
+      if (!this.login) {
         Toast('请输入邮箱')
         return
       }
       this.$root.$data.setLoading(true)
-      sendPinCode({ email: this.email, isReset: this.type === 'forgetPwd' }).then(res => {
+      sendPinCode({ login: this.login, isReset: this.type === 'forgetPwd' }).then(res => {
         this.$root.$data.setLoading(false)
         if (res.success) {
           Toast('发送验证码成功，请到邮箱查看')
@@ -140,27 +143,27 @@ export default {
       })
     },
     _isValid() {
-      let email = this.email
+      let login = this.login
       let password = this.password
       let pwdRepeat = this.pwdRepeat
       let pin = this.pin
       // 所有情况都需要校验
-      if (!email) {
+      if (!login) {
         Toast({
-          message: '请输入邮箱地址',
+          message: '请输入账号',
           iconClass: 'iconfont icon-zhuyi',
           className: 'form-invalid'
         })
         return false
       }
-      if (email && !commonRegex.email.test(email)) {
-        Toast({
-          message: '请输入合法的邮箱地址',
-          iconClass: 'iconfont icon-zhuyi',
-          className: 'form-invalid'
-        })
-        return
-      }
+      // if (login && !commonRegex.login.test(login)) {
+      //   Toast({
+      //     message: '请输入合法的邮箱地址',
+      //     iconClass: 'iconfont icon-zhuyi',
+      //     className: 'form-invalid'
+      //   })
+      //   return
+      // }
       if (!password) {
         Toast({
           message: '请输入密码',
@@ -187,14 +190,14 @@ export default {
           })
           return false
         }
-        if (!pin) {
-          Toast({
-            message: '请输入验证码',
-            iconClass: 'iconfont icon-zhuyi',
-            className: 'form-invalid'
-          })
-          return false
-        }
+        // if (!pin) {
+        //   Toast({
+        //     message: '请输入验证码',
+        //     iconClass: 'iconfont icon-zhuyi',
+        //     className: 'form-invalid'
+        //   })
+        //   return false
+        // }
       }
       return true
     }

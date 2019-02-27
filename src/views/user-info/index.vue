@@ -4,7 +4,7 @@
       <mt-header fixed title="个人信息">
       </mt-header>
       <ul class="info-list">
-        <label for="upload" class="avatar">
+        <!-- <label for="upload" class="avatar">
           <input
             id="upload"
             ref="upload"
@@ -12,45 +12,61 @@
             accept="image/jpeg,image/jpg,image/png,image/gif"
             @change="uploadAvatar">
           <img :src="imgUrl">
-        </label>
+        </label> -->
         <li>
           <label>昵称</label>
-          <span class="data">{{ userInfo.username }}</span>
+          <span class="data">{{ stuInfo.stuname }}</span>
+        </li>
+        <li>
+          <label>账号</label>
+          <span class="data">{{ stuInfo.login }}</span>
         </li>
         <li>
           <label>性别</label>
-          <span class="data">{{ getGender(userInfo.gender) }}</span>
+          <span class="data">{{ getGender(stuInfo.sex) }}</span>
         </li>
-        <li>
+        <!-- <li>
           <label>年龄</label>
-          <span class="data">{{ userInfo.age }}</span>
-        </li>
+          <span class="data">{{ stuInfo.age }}</span>
+        </li> -->
         <li>
-          <label>城市</label>
-          <span class="data">{{ userInfo.city }}</span>
+          <label>地址</label>
+          <span class="data">{{ stuInfo.address }}</span>
         </li>
-        <li>
+        <!-- <li>
           <label>邮箱</label>
-          <span class="data">{{ userInfo.email }}</span>
-        </li>
+          <span class="data">{{ stuInfo.email }}</span>
+        </li> -->
         <li>
           <label>电话</label>
-          <span class="data">{{ userInfo.tel }}</span>
+          <span class="data">{{ stuInfo.phone }}</span>
         </li>
-        <li>
+        <!-- <li>
           <label>微信号</label>
-          <span class="data">{{ userInfo.wechat }}</span>
-        </li>
+          <span class="data">{{ stuInfo.wechat }}</span>
+        </li> -->
         <li>
           <label>QQ号</label>
-          <span class="data">{{ userInfo.qq }}</span>
+          <span class="data">{{ stuInfo.qq }}</span>
         </li>
         <li>
-          <label>备注</label>
-          <span class="data">{{ userInfo.remark }}</span>
+          <label>专业</label>
+          <span class="data">{{ stuInfo.profession }}</span>
         </li>
+        <li>
+          <label>学校名称</label>
+          <span class="data">{{ stuInfo.campusid }}</span>
+        </li>
+        <li>
+          <label>班级名称</label>
+          <span class="data">{{ stuInfo.classinfoid }}</span>
+        </li>
+        <!-- <li>
+          <label>备注</label>
+          <span class="data">{{ stuInfo.remark }}</span>
+        </li> -->
       </ul>
-      <ul class="history-list">
+      <!-- <ul class="history-list">
         <li>
           <label>我发布的</label>
           <span class="data" @click="userCreated()"><i class="iconfont icon-jiantouyou"></i></span>
@@ -59,7 +75,7 @@
           <label>我接受的</label>
           <span class="data" @click="userReceived()"><i class="iconfont icon-jiantouyou"></i></span>
         </li>
-      </ul>
+      </ul> -->
       <button @click="modifyInfo">修改个人信息</button>
       <!-- <button @click="logout" class="logout">退出登录</button> -->
       <button @click="logout" class="logout">退出登录</button>
@@ -82,79 +98,91 @@ export default {
   name: 'userInfo',
   data() {
     return {
-      userInfo: {},
+      // userInfo: {},
       imgUrl: loading,
-      childView: false
+      childView: false,
+      stuInfo:{}
     }
   },
   components: {
     AppFooter
   },
+  created(){
+    this.fetch()
+  },
   methods: {
-    userCreated() {
-      let id = this.userInfo.id
-      this.$router.push({
-        path: `/user-info/user-order`,
-        query: { creatorId: id }
-      })
+    fetch() {
+      this.stuInfo = JSON.parse(sessionStorage.localLogin);
+
+      console.log(this.stuInfo)
     },
-    userReceived() {
-      let id = this.userInfo.id
-      this.$router.push({
-        path: `/user-info/user-order`,
-        query: { receiverId: id }
-      })
+    getGender(code) { //性别
+      if (code === '1') return '男'
+      if (code === '0') return '女'
+      return '未知'
     },
-    logout() {
+    logout() {  //退出
       // deleteCookie('koa:sess')
       // deleteCookie('koa:sess.sig')
       // logout().then(() => { this.$router.push('/login') })
+      localStorage.clear();
       this.$router.push('/login')
     },
     modifyInfo(userId) {
-      this.$router.push('/user-info/modify-info/' + this.userInfo.id)
+      this.$router.push('/user-info/modify-info/' + this.stuInfo.id)
     },
-    fetch() {
-      getUser().then(res => {
-        if (res.success) {
-          this.userInfo = res.data
-          this.imgUrl = process.env.BASE_API + '/avatar/avatar_' + this.userInfo.id + '?time=' + Date.now()
-        } else {
-          Toast(res.msg)
-        }
-      })
-    },
-    getGender(code) {
-      if (code === gender.MALE) return '男'
-      if (code === gender.FEMALE) return '女'
-      if (code === gender.UNKNOWN) return '未知'
-    },
-    uploadAvatar(e) {
-      let file = e.target.files[0]
-      if (file.size > 1000 * 1000 * 2) { // 文件大小应该小于2M
-        e.target.value = ''
-        Toast('上传头像大小应小于2M')
-        return
-      }
-      modifyAvatar(file, this.userInfo.id).then(res => {
-        if (res.success) {
-          this.imgUrl = this.imgUrl + '?time=' + Date.now()
-        }
-      })
-    }
+    // userCreated() {
+    //   let id = this.userInfo.id
+    //   this.$router.push({
+    //     path: `/user-info/user-order`,
+    //     query: { creatorId: id }
+    //   })
+    // },
+    // userReceived() {
+    //   let id = this.userInfo.id
+    //   this.$router.push({
+    //     path: `/user-info/user-order`,
+    //     query: { receiverId: id }
+    //   })
+    // },
+    
+    // fetch() {
+    //   getUser().then(res => {
+    //     if (res.success) {
+    //       this.userInfo = res.data
+    //       this.imgUrl = process.env.BASE_API + '/avatar/avatar_' + this.userInfo.id + '?time=' + Date.now()
+    //     } else {
+    //       Toast(res.msg)
+    //     }
+    //   })
+    // },
+    
+    // uploadAvatar(e) {
+    //   let file = e.target.files[0]
+    //   if (file.size > 1000 * 1000 * 2) { // 文件大小应该小于2M
+    //     e.target.value = ''
+    //     Toast('上传头像大小应小于2M')
+    //     return
+    //   }
+    //   modifyAvatar(file, this.userInfo.id).then(res => {
+    //     if (res.success) {
+    //       this.imgUrl = this.imgUrl + '?time=' + Date.now()
+    //     }
+    //   })
+    // }
   },
-  created() {
-    if (this.$route.name !== 'userInfo') this.childView = true
-    this.fetch()
-  },
+  // created() {
+  //   if (this.$route.name !== 'userInfo') this.childView = true
+  //   this.fetch()
+  // },
   watch: {
     '$route': function(to, from) {
       // 如果是从父页面跳转到子页面
-      if (from.name === 'userInfo' && (to.name === 'userOrder' || to.name === 'modifyInfo')) {
+      if (from.name === 'stuInfo' && (to.name === 'userOrder' || to.name === 'modifyInfo')) {
         setTimeout(() => {
           this.childView = true
         }, 300)
-      } else if (to.name === 'userInfo' && (from.name === 'userOrder' || from.name === 'modifyInfo')) {
+      } else if (to.name === 'stuInfo' && (from.name === 'userOrder' || from.name === 'modifyInfo')) {
         // 跳转回父页面
         this.childView = false
       }

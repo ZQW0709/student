@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export function studentLogin(params) {  //学生登录
-  const url = 'http://localhost:9527/studentLogin'
+  const url = 'http://192.168.0.151:9527/studentLogin'
   return axios.post(url, params, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -9,8 +9,8 @@ export function studentLogin(params) {  //学生登录
   })
 }
 
-export function updateClassmanage(params) {  //修改
-  const url = 'http://localhost:9527/updateClassmanage'
+export function updateStudent(params) {  //修改学生信息
+  const url = 'http://localhost:9527/updateStudent'
   return axios.post(url, params)
 }
 
@@ -31,5 +31,15 @@ export function getAllCampusmanage(params) {  //获取校区所有数据 用于�
 export function addClassmanage(params) {  //新增
   const url = 'http://localhost:9527/addClassmanage'
   return axios.post(url, params)
+}
+
+
+export function updataPwd(params) {  //修改密码
+  const url = 'http://localhost:9527/updataPwd'
+  return axios.post(url, params, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
 }
 

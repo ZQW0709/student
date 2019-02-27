@@ -1,7 +1,7 @@
 <template>
   <div class="new-order">
     <header>
-      <span>用户登录</span>
+      <span>用 户 登 录</span>
       <i class="iconfont icon-shouye" @click="back"></i>
     </header>
     <div class="user-form">

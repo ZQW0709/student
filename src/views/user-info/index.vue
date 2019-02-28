@@ -122,10 +122,8 @@ export default {
       return '未知'
     },
     logout() {  //退出
-      // deleteCookie('koa:sess')
-      // deleteCookie('koa:sess.sig')
-      // logout().then(() => { this.$router.push('/login') })
-      localStorage.clear();
+      var storage=window.sessionStorage;
+      storage.clear();
       this.$router.push('/login')
     },
     modifyInfo(userId) {

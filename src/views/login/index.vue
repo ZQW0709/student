@@ -72,7 +72,6 @@ export default {
       studentLogin(params)
 
       .then(res => {
-        console.log(res.data)
         if(res.data.length != 0) {
           sessionStorage.localLogin=JSON.stringify(res.data);
           this.$router.push('/homepage')

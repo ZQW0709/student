@@ -11,6 +11,9 @@ import './assets/iconfont/iconfont.css'
 
 import './styles/index.scss'  //其中包含了iconfont
 
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
 Vue.config.productionTip = false
 fastclick.attach(document.body) // 解决移动端点击延迟的问题
 
@@ -29,6 +32,7 @@ let store = {
 }
 
 Vue.use(MintUI)
+Vue.use(ElementUI)
 
 /* eslint-disable no-new */
 new Vue({

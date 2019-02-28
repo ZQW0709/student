@@ -16,11 +16,14 @@ export default {
   components: {
     Loading
   },
+  created() {
+    this.checkLogin()
+  },
   methods: {
     /**
      * 检查登录状态
      */
-    // checkLogin() {
+    checkLogin() {
       // if (!this.getCookie('koa:sess')) {
       //   // 如果没有登录状态则跳转到登录页
       //   this.$router.push('/login')
@@ -28,11 +31,14 @@ export default {
       // } else {
       //   if (this.$route.path === '/login') {
       //     this.getLoginUser()
-          // this.$router.push('/homepage')
-        // }
-        // return true
+      //     this.$router.push('/homepage')
+      //   }
+      //   return true
       // }
-    // },
+      if(sessionStorage.getItem("localLogin") == null) {
+        this.$router.push('/login')
+      }
+    },
     /**
      * 获取指定名称的cookie值
      * @param name
@@ -56,9 +62,9 @@ export default {
   // created() {
   //   this.checkLogin() 
   // },
-  // watch: {
-  //   '$route': 'checkLogin'
-  // }
+  watch: {
+    '$route': 'checkLogin'
+  }
 }
 </script>
 

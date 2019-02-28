@@ -6,7 +6,7 @@
     <router-link tag="div" class="tab-item" to="/order-list">
       <i class="iconfont icon-listview tab-link"></i>
     </router-link>
-    <router-link tag="div" class="tab-item" to="/user-info">
+    <router-link tag="div" class="tab-item" to="/problem">
       <i class="iconfont icon-dati tab-link"></i>
     </router-link>
     <router-link tag="div" class="tab-item" to="/user-info">

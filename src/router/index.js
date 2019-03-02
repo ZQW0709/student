@@ -17,7 +17,7 @@ import Response from 'views/response'
 Vue.use(Router)
 
 export default new Router({
-  mode:'history',
+  mode: 'history',
   routes: [
     // {
     //   path: '/',
@@ -33,11 +33,11 @@ export default new Router({
         component: NewOrder
       }]
     },
-    
+
     {
       name: 'problem',
       path: '/problem',
-      component: Problem,
+      component: Problem
       // children: [
       //   {
       //     path: '/response',
@@ -49,7 +49,7 @@ export default new Router({
     {
       path: '/response',
       name: 'response',
-      component:Response,
+      component: Response
     },
     {
       name: 'userInfo',
@@ -83,18 +83,18 @@ export default new Router({
         component: OrderDetail
       }]
     },
-    
-{
-    path: '/page404',
-    name: 'page404',
-    component: Page404
-},
-// {
-//       name: 'homepage',
-//       path: '/homepage',
-//       component: Homepage
-//     },
-    
+
+    {
+      path: '/page404',
+      name: 'page404',
+      component: Page404
+    },
+    // {
+    //       name: 'homepage',
+    //       path: '/homepage',
+    //       component: Homepage
+    //     },
+
     // {
     //   name: 'homepage',
     //   path: '/homepage',

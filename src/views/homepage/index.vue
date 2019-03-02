@@ -17,28 +17,22 @@
       <!-- <button @click="newOrder">约<span class="right-arrow">▶</span></button> -->
       <button >答<span class="right-arrow">▶</span></button>
     </div>
-    <router-view></router-view>
-    <app-footer class="main-footer"></app-footer>
+    <router-view/>
+    <app-footer class="main-footer"/>
   </div>
 </template>
 
 <script>
-import { getUserInfo } from 'api/user'
-import Toast from 'components/toast'
+// import { getUserInfo } from 'api/user'
+// import Toast from 'components/toast'
 import AppHeader from 'components/app-header.vue'
 import AppFooter from 'components/app-footer.vue'
-import {queryOrder, readAllUnreadOrder} from '@/api/order'
-import { orderStatus } from '@/constant/index'
-import { MessageBox } from 'mint-ui'
+// import { queryOrder, readAllUnreadOrder } from '@/api/order'
+// import { orderStatus } from '@/constant/index'
+// import { MessageBox } from 'mint-ui'
 
 export default {
-  name: 'homepage',
-  data() {
-    return {
-      userInfo: {},
-      unReadCnt: 0
-    }
-  },
+  name: 'Homepage',
   // computed: {
   //   title() {
   //     if (this.userInfo.ordersTotal === 0) {
@@ -56,6 +50,25 @@ export default {
     AppHeader,
     AppFooter
   },
+  data() {
+    return {
+      userInfo: {},
+      unReadCnt: 0
+    }
+  },
+  created() {
+    // getUserInfo().then(res => {
+    //   if (res.success) {
+    //     this.userInfo = res.data
+    //     queryOrder({ creatorName: this.userInfo.username, status: orderStatus.RECEIVED_UNREAD }).then(res => {
+    //       this.unReadCnt = res.data.length
+    //     })
+    //   } else {
+    //     Toast(res.msg)
+    //   }
+    // })
+
+  },
   methods: {
     // seeUnreadMsg() {
     //   MessageBox.alert(`你有 ${this.unReadCnt} 个邀约被人接受啦！可去个人中心查看详情`).then(() => {
@@ -70,19 +83,6 @@ export default {
     //   }
     //   this.$router.push('/homepage/new-order')
     // }
-  },
-  created() {
-    // getUserInfo().then(res => {
-    //   if (res.success) {
-    //     this.userInfo = res.data
-    //     queryOrder({ creatorName: this.userInfo.username, status: orderStatus.RECEIVED_UNREAD }).then(res => {
-    //       this.unReadCnt = res.data.length
-    //     })
-    //   } else {
-    //     Toast(res.msg)
-    //   }
-    // })
-
   }
 }
 </script>

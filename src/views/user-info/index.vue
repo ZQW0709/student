@@ -1,8 +1,7 @@
 <template>
   <div class="user-info">
     <template v-if="!childView">
-      <mt-header fixed title="个人信息">
-      </mt-header>
+      <mt-header fixed title="个人信息"/>
       <ul class="info-list">
         <!-- <label for="upload" class="avatar">
           <input
@@ -78,10 +77,10 @@
       </ul> -->
       <button @click="modifyInfo">修改个人信息</button>
       <!-- <button @click="logout" class="logout">退出登录</button> -->
-      <button @click="logout" class="logout">退出登录</button>
-      <app-footer class="main-footer"></app-footer>
+      <button class="logout" @click="logout">退出登录</button>
+      <app-footer class="main-footer"/>
     </template>
-    <router-view></router-view>
+    <router-view/>
   </div>
 </template>
 
@@ -95,79 +94,17 @@ import { gender } from '@/constant'
 import loading from '@/assets/loading.gif'
 
 export default {
-  name: 'userInfo',
+  name: 'UserInfo',
+  components: {
+    AppFooter
+  },
   data() {
     return {
       // userInfo: {},
       imgUrl: loading,
       childView: false,
-      stuInfo:{}
+      stuInfo: {}
     }
-  },
-  components: {
-    AppFooter
-  },
-  created(){
-    this.fetch()
-  },
-  methods: {
-    fetch() {
-      this.stuInfo = JSON.parse(sessionStorage.localLogin);
-
-      console.log(this.stuInfo)
-    },
-    getGender(code) { //性别
-      if (code === '1') return '男'
-      if (code === '0') return '女'
-      return '未知'
-    },
-    logout() {  //退出
-      var storage=window.sessionStorage;
-      storage.clear();
-      this.$router.push('/login')
-    },
-    modifyInfo(userId) {
-      this.$router.push('/user-info/modify-info/' + this.stuInfo.id)
-    },
-    // userCreated() {
-    //   let id = this.userInfo.id
-    //   this.$router.push({
-    //     path: `/user-info/user-order`,
-    //     query: { creatorId: id }
-    //   })
-    // },
-    // userReceived() {
-    //   let id = this.userInfo.id
-    //   this.$router.push({
-    //     path: `/user-info/user-order`,
-    //     query: { receiverId: id }
-    //   })
-    // },
-    
-    // fetch() {
-    //   getUser().then(res => {
-    //     if (res.success) {
-    //       this.userInfo = res.data
-    //       this.imgUrl = process.env.BASE_API + '/avatar/avatar_' + this.userInfo.id + '?time=' + Date.now()
-    //     } else {
-    //       Toast(res.msg)
-    //     }
-    //   })
-    // },
-    
-    // uploadAvatar(e) {
-    //   let file = e.target.files[0]
-    //   if (file.size > 1000 * 1000 * 2) { // 文件大小应该小于2M
-    //     e.target.value = ''
-    //     Toast('上传头像大小应小于2M')
-    //     return
-    //   }
-    //   modifyAvatar(file, this.userInfo.id).then(res => {
-    //     if (res.success) {
-    //       this.imgUrl = this.imgUrl + '?time=' + Date.now()
-    //     }
-    //   })
-    // }
   },
   // created() {
   //   if (this.$route.name !== 'userInfo') this.childView = true
@@ -189,6 +126,68 @@ export default {
         this.fetch()
       }
     }
+  },
+  created() {
+    this.fetch()
+  },
+  methods: {
+    fetch() {
+      this.stuInfo = JSON.parse(sessionStorage.localLogin)
+
+      console.log(this.stuInfo)
+    },
+    getGender(code) { // 性别
+      if (code === '1') return '男'
+      if (code === '0') return '女'
+      return '未知'
+    },
+    logout() { // 退出
+      var storage = window.sessionStorage
+      storage.clear()
+      this.$router.push('/login')
+    },
+    modifyInfo(userId) {
+      this.$router.push('/user-info/modify-info/' + this.stuInfo.id)
+    }
+    // userCreated() {
+    //   let id = this.userInfo.id
+    //   this.$router.push({
+    //     path: `/user-info/user-order`,
+    //     query: { creatorId: id }
+    //   })
+    // },
+    // userReceived() {
+    //   let id = this.userInfo.id
+    //   this.$router.push({
+    //     path: `/user-info/user-order`,
+    //     query: { receiverId: id }
+    //   })
+    // },
+
+    // fetch() {
+    //   getUser().then(res => {
+    //     if (res.success) {
+    //       this.userInfo = res.data
+    //       this.imgUrl = process.env.BASE_API + '/avatar/avatar_' + this.userInfo.id + '?time=' + Date.now()
+    //     } else {
+    //       Toast(res.msg)
+    //     }
+    //   })
+    // },
+
+    // uploadAvatar(e) {
+    //   let file = e.target.files[0]
+    //   if (file.size > 1000 * 1000 * 2) { // 文件大小应该小于2M
+    //     e.target.value = ''
+    //     Toast('上传头像大小应小于2M')
+    //     return
+    //   }
+    //   modifyAvatar(file, this.userInfo.id).then(res => {
+    //     if (res.success) {
+    //       this.imgUrl = this.imgUrl + '?time=' + Date.now()
+    //     }
+    //   })
+    // }
   }
 }
 </script>

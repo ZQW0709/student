@@ -1,46 +1,44 @@
 <template>
   <div class="order-view">
     <template v-if="!childView">
-      <mt-header fixed title="邀约列表">
-      </mt-header>
+      <mt-header fixed title="邀约列表"/>
       <div class="search">
-        <i @click="cityPopupVisible = true" class="iconfont icon-dangdi"></i>
-        <span @click="cityPopupVisible = true" class="city">{{ city }}</span>
+        <i class="iconfont icon-dangdi" @click="cityPopupVisible = true"/>
+        <span class="city" @click="cityPopupVisible = true">{{ city }}</span>
         <mt-popup
           v-model="cityPopupVisible"
           position="right">
-          <mt-header fixed title="请选择邀约城市"></mt-header>
-          <mt-picker :slots="slots" @change="onValuesChange">
-          </mt-picker>
+          <mt-header fixed title="请选择邀约城市"/>
+          <mt-picker :slots="slots" @change="onValuesChange"/>
           <mt-button type="primary" size="small" class="submit-btn" @click="selectCity">确 定</mt-button>
         </mt-popup>
-        <input @keyup.enter="fetch" v-model="search" type="text" placeholder="请输入查询内容">
-        <i @click="fetch" class="iconfont icon-sousuo"></i>
+        <input v-model="search" type="text" placeholder="请输入查询内容" @keyup.enter="fetch">
+        <i class="iconfont icon-sousuo" @click="fetch"/>
       </div>
       <div class="order-list">
         <ul>
-          <li @click="goDetail(item.id)" :key="index" v-for="(item, index) in orderList">
+          <li v-for="(item, index) in orderList" :key="index" @click="goDetail(item.id)">
             <div class="order-title">
-              <span>{{item.title}}</span>
+              <span>{{ item.title }}</span>
             </div>
             <div class="order-secondary">
-              <span class="creator">{{item.creatorName}}</span>
-              <span class="time">{{getInterval(item.createTime)}}</span>
+              <span class="creator">{{ item.creatorName }}</span>
+              <span class="time">{{ getInterval(item.createTime) }}</span>
             </div>
           </li>
-          <li class="loading" v-if="loading && !allLoaded">加载中...</li>
+          <li v-if="loading && !allLoaded" class="loading">加载中...</li>
         </ul>
       </div>
-      <div class="to-top" v-show="showToTop">
-        <i class="iconfont icon-xiangshangjiantou" @click="toTop"></i>
+      <div v-show="showToTop" class="to-top">
+        <i class="iconfont icon-xiangshangjiantou" @click="toTop"/>
       </div>
       <div class="refresh">
-        <i class="iconfont icon-shuaxin" @click="fetch"></i>
+        <i class="iconfont icon-shuaxin" @click="fetch"/>
       </div>
-      <app-footer class="main-footer"></app-footer>
+      <app-footer class="main-footer"/>
     </template>
     <transition>
-      <router-view></router-view>
+      <router-view/>
     </transition>
   </div>
 </template>
@@ -53,6 +51,9 @@ import { getInterval, smoothScrollTo } from '@/utils'
 import { province, city } from '@/utils/cityData'
 
 export default {
+  components: {
+    AppFooter
+  },
   data() {
     return {
       orderList: [],
@@ -84,8 +85,25 @@ export default {
       showToTop: false
     }
   },
-  components: {
-    AppFooter
+  watch: {
+    '$route': function(to, from) {
+      // 如果是从父页面跳转到子页面
+      if (from.name === 'orderList') {
+        setTimeout(() => {
+          this.childView = true
+        }, 300)
+      } else {
+        this.childView = false
+      }
+    }
+  },
+  created() {
+    if (this.$route.name !== 'orderList') this.childView = true
+    this.fetch()
+    window.addEventListener('scroll', this.onScroll)
+  },
+  destroyed() {
+    window.removeEventListener('scroll', this.onScroll)
   },
   methods: {
     onValuesChange(picker, values) {
@@ -113,7 +131,7 @@ export default {
     },
     fetch() {
       this.$root.$data.setLoading(true)
-      let city = this.city === '全部' ? '' : this.city
+      const city = this.city === '全部' ? '' : this.city
       queryCurrentOrders({ search: this.search, city, start: 0, size: 10 }).then(res => {
         this.$root.$data.setLoading(false)
         if (res.success) {
@@ -144,9 +162,9 @@ export default {
       }, 1000)
     },
     onScroll() {
-      let top = document.documentElement.scrollTop || document.body.scrollTop // 滚动条在Y轴上的滚动距离
-      let vh = document.compatMode === 'CSS1Compat' ? document.documentElement.clientHeight : document.body.clientHeight // 浏览器视口的高度
-      let height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) // 文档的总高度
+      const top = document.documentElement.scrollTop || document.body.scrollTop // 滚动条在Y轴上的滚动距离
+      const vh = document.compatMode === 'CSS1Compat' ? document.documentElement.clientHeight : document.body.clientHeight // 浏览器视口的高度
+      const height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) // 文档的总高度
       if (top >= 50) {
         this.showToTop = true
       } else {
@@ -158,26 +176,6 @@ export default {
       }
     },
     getInterval
-  },
-  created() {
-    if (this.$route.name !== 'orderList') this.childView = true
-    this.fetch()
-    window.addEventListener('scroll', this.onScroll)
-  },
-  destroyed() {
-    window.removeEventListener('scroll', this.onScroll)
-  },
-  watch: {
-    '$route': function(to, from) {
-      // 如果是从父页面跳转到子页面
-      if (from.name === 'orderList') {
-        setTimeout(() => {
-          this.childView = true
-        }, 300)
-      } else {
-        this.childView = false
-      }
-    }
   }
 }
 </script>

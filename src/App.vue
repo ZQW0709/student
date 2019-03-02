@@ -1,20 +1,29 @@
 <template>
   <div id="app">
     <keep-alive include="userInfo">
-      <router-view></router-view>
+      <router-view/>
     </keep-alive>
-    <Loading v-if="$root.$data.loading"></Loading>
+    <Loading v-if="$root.$data.loading"/>
   </div>
 </template>
 
 <script>
 import Loading from 'components/loading.vue'
-import { getUser } from '@/api/user'
+// import { getUser } from '@/api/user'
 
 export default {
   name: 'App',
   components: {
     Loading
+  },
+  // created() {
+  //   this.checkLogin() && this.getLoginUser()
+  // },
+  // created() {
+  //   this.checkLogin()
+  // },
+  watch: {
+    '$route': 'checkLogin'
   },
   created() {
     this.checkLogin()
@@ -35,10 +44,10 @@ export default {
       //   }
       //   return true
       // }
-      if(sessionStorage.getItem("localLogin") == null) {
+      if (sessionStorage.getItem('localLogin') == null) {
         this.$router.push('/login')
       }
-    },
+    }
     /**
      * 获取指定名称的cookie值
      * @param name
@@ -55,15 +64,6 @@ export default {
     //     }
     //   })
     // }
-  },
-  // created() {
-  //   this.checkLogin() && this.getLoginUser()
-  // },
-  // created() {
-  //   this.checkLogin() 
-  // },
-  watch: {
-    '$route': 'checkLogin'
   }
 }
 </script>

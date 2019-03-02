@@ -9,16 +9,16 @@ import 'mint-ui/lib/style.css'
 
 import './assets/iconfont/iconfont.css'
 
-import './styles/index.scss'  //其中包含了iconfont
+import './styles/index.scss' // 其中包含了iconfont
 
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.config.productionTip = false
 fastclick.attach(document.body) // 解决移动端点击延迟的问题
 
 // 全局变量 user 信息
-let store = {
+const store = {
   user: undefined,
   loading: false,
   setUser(user) {

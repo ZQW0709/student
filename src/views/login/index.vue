@@ -2,25 +2,25 @@
   <div class="new-order">
     <header>
       <span>用 户 登 录</span>
-      <i class="iconfont icon-shouye" @click="back"></i>
+      <i class="iconfont icon-shouye" @click="back"/>
     </header>
     <div class="user-form">
-      <p class="input"><input type="text" placeholder="账号" v-model="login" ></p>
-      
+      <p class="input"><input v-model="login" type="text" placeholder="账号" ></p>
+
       <!-- 注册 -->
       <template v-if="type === 'register'">
-        <p class="input"><input type="password" placeholder="密码（不少于6位）" v-model="password"></p>
-        <p class="input"><input type="password" placeholder="再次输入密码" v-model="pwdRepeat"></p>
+        <p class="input"><input v-model="password" type="password" placeholder="密码（不少于6位）"></p>
+        <p class="input"><input v-model="pwdRepeat" type="password" placeholder="再次输入密码"></p>
         <p class="input verification-code">
-          <input type="text" placeholder="验证码" v-model="pin">
+          <input v-model="pin" type="text" placeholder="验证码">
           <button @click="getPinCode">发送验证码</button>
         </p>
         <button class="submit-btn" @click="register">注 册</button>
       </template>
       <!-- 忘记密码 -->
       <template v-else-if="this.type === 'forgetPwd'">
-        <p class="input"><input type="password" placeholder="新密码（不少于6位）" v-model="password"></p>
-        <p class="input"><input type="password" placeholder="再次输入密码" v-model="pwdRepeat"></p>
+        <p class="input"><input v-model="password" type="password" placeholder="新密码（不少于6位）"></p>
+        <p class="input"><input v-model="pwdRepeat" type="password" placeholder="再次输入密码"></p>
         <!-- <p class="input verification-code">
           <input type="text" placeholder="验证码" v-model="pin">
           <button @click="getPinCode">发送验证码</button>
@@ -29,12 +29,12 @@
       </template>
       <!-- 登录 -->
       <template v-else>
-        <p class="input"><input type="password" placeholder="密码" v-model="password"></p>
+        <p class="input"><input v-model="password" type="password" placeholder="密码"></p>
         <button class="submit-btn" @click="denglu">登 录</button>
       </template>
     </div>
     <div class="tips">
-      <span v-if="this.type === 'login'"  @click="type = 'forgetPwd'">忘记密码？</span>
+      <span v-if="this.type === 'login'" @click="type = 'forgetPwd'">忘记密码？</span>
       <span @click="type = type === 'login' ? 'register' : 'login'">
         {{ this.type === 'login' ? '创建账户' : '已有账户' }}
       </span>
@@ -44,8 +44,8 @@
 
 <script>
 import qs from 'qs'
-import {  register, resetUserPwd, sendPinCode } from 'api/user'
-import { studentLogin,updataPwd } from '@/api/login'
+// import { register, resetUserPwd, sendPinCode } from 'api/user'
+import { studentLogin, updataPwd } from '@/api/login'
 import { commonRegex } from '@/utils'
 import { Toast } from 'mint-ui'
 export default {
@@ -71,21 +71,20 @@ export default {
       params = qs.stringify(params)
       studentLogin(params)
 
-      .then(res => {
-        if(res.data.length != 0) {
-          sessionStorage.localLogin=JSON.stringify(res.data);
-          this.$router.push('/homepage')
-        } 
-        else {
-          Toast({
-            message: '登录失败',
-            iconClass: 'iconfont icon-zhuyi',
-            className: 'form-invalid'
-          })
-        }
-      }).catch(err => {
-        console.log('登录页面>发送请求-login()出错：', err)
-      })
+        .then(res => {
+          if (res.data.length !== 0) {
+            sessionStorage.localLogin = JSON.stringify(res.data)
+            this.$router.push('/homepage')
+          } else {
+            Toast({
+              message: '登录失败',
+              iconClass: 'iconfont icon-zhuyi',
+              className: 'form-invalid'
+            })
+          }
+        }).catch(err => {
+          console.log('登录页面>发送请求-login()出错：', err)
+        })
     },
     register() {
       if (!this._isValid()) return
@@ -104,24 +103,24 @@ export default {
       if (!this._isValid()) return
       this.$root.$data.setLoading(true)
       // resetUserPwd({ login: this.login, password: this.password, pin: this.pin }).then(res => {
-        let params = {
-          login: this.login,
-          pwd: this.password
-        }
-        params = qs.stringify(params)
+      let params = {
+        login: this.login,
+        pwd: this.password
+      }
+      params = qs.stringify(params)
       updataPwd(params)
-      .then(res => {
-        this.$root.$data.setLoading(false)
-        if (res.success) {
-          Toast(res.msg)
-          this.type = 'login'
-        } else {
-          Toast(res.msg)
-        }
-      }).catch(err => {
-        this.$root.$data.setLoading(false)
-        console.log('登录页面>重置密码-resetPassword()出错：', err)
-      })
+        .then(res => {
+          this.$root.$data.setLoading(false)
+          if (res.success) {
+            Toast(res.msg)
+            this.type = 'login'
+          } else {
+            Toast(res.msg)
+          }
+        }).catch(err => {
+          this.$root.$data.setLoading(false)
+          console.log('登录页面>重置密码-resetPassword()出错：', err)
+        })
     },
     getPinCode() {
       if (!this.login) {
@@ -142,10 +141,10 @@ export default {
       })
     },
     _isValid() {
-      let login = this.login
-      let password = this.password
-      let pwdRepeat = this.pwdRepeat
-      let pin = this.pin
+      const login = this.login
+      const password = this.password
+      const pwdRepeat = this.pwdRepeat
+      // const pin = this.pin
       // 所有情况都需要校验
       if (!login) {
         Toast({

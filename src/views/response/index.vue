@@ -6,15 +6,15 @@
         <span>题量：9</span>
         <span>总分：100</span>
         <span>合格：60</span>
-        <span>答题时间：{{duration}}</span>
+        <span>答题时间：{{ duration }}</span>
       </p>
       <ul class="examination-question-list">
         <li
-          :id="'anchor-'+num"
           v-for="(items,num) in testList"
+          :id="'anchor-'+num"
           :key="num"
         >
-          <h5>{{ num +1 }}．{{items.title}}
+          <h5>{{ num +1 }}．{{ items.title }}
             <span v-if="items.type === 0">［判断题］</span>
             <span v-if="items.type === 1">［单选题］</span>
             <span v-if="items.type === 2">［多选题］</span>
@@ -28,11 +28,11 @@
               <span
                 :class="{active: isSelected(items, 0)}"
                 @click="selectOption(items,num,0)"
-              ><i class="iconfont icon-gouxuan"></i>A</span>
+              ><i class="iconfont icon-gouxuan"/>A</span>
               <span
                 :class="{active: isSelected(items, 1)}"
                 @click="selectOption(items,num,1)"
-              ><i class="iconfont icon-gouxuan"></i>B</span>
+              ><i class="iconfont icon-gouxuan"/>B</span>
             </div>
           </div>
           <div v-else>
@@ -40,7 +40,7 @@
               <p
                 v-for="(item, index) in items.options"
                 :key="index"
-              >{{item}}</p>
+              >{{ item }}</p>
             </div>
             <div class="check-content">
               <span
@@ -48,7 +48,7 @@
                 :key="index"
                 :class="{active: isSelected(items, index)}"
                 @click="selectOption(items,num,index)"
-              ><i class="iconfont icon-gouxuan"></i>{{numberToLetter(index)}}</span>
+              ><i class="iconfont icon-gouxuan"/>{{ numberToLetter(index) }}</span>
             </div>
           </div>
         </li>
@@ -57,16 +57,16 @@
     <div class="cutdown-submit-wrap bg-white">
       <div class="examination-num">
         <a
-          href="javascript:;"
-          @click="selectIndex(index)"
-          class="num-item"
           v-for="(item,index) in testList"
           :class="{selected: isDone(item), current: index === currentIndex}"
           :key="index"
-        >{{index + 1}}</a>
+          href="javascript:;"
+          class="num-item"
+          @click="selectIndex(index)"
+        >{{ index + 1 }}</a>
       </div>
       <div class="cutdown-content">
-        <span class="cutdown-text">剩余时间：<span class="red">{{rest}}</span></span>
+        <span class="cutdown-text">剩余时间：<span class="red">{{ rest }}</span></span>
         <x-button
           mini
           class="examination-submit-btn"
@@ -99,23 +99,23 @@
 
 <script>
 // 多选题数组选项处理
-Array.prototype.contains = function(obj) {
-  var i = this.length;
-  while (i--) {
-    if (this[i] === obj) {
-      return true;
-    }
-  }
-  return false;
-};
 import {
   XButton,
   Confirm,
   Alert,
   TransferDomDirective as TransferDom
-} from "vux";
-import { getExaminfoByTypeId } from "@/api/problem";
-import qs from "qs";
+} from 'vux'
+import { getExaminfoByTypeId } from '@/api/problem'
+import qs from 'qs'
+Array.prototype.contains = function(obj) {
+  var i = this.length
+  while (i--) {
+    if (this[i] === obj) {
+      return true
+    }
+  }
+  return false
+}
 
 export default {
   directives: {
@@ -128,71 +128,71 @@ export default {
   },
   data() {
     return {
-      examtypeid: "", //题目类型ID
+      examtypeid: '', // 题目类型ID
       alertShow: false,
-      alertTitle: "提示",
-      alertText: "",
+      alertTitle: '提示',
+      alertText: '',
       alertType: 0,
       confirmShow: false,
-      confirmTitle: "提示",
-      confirmText: "",
+      confirmTitle: '提示',
+      confirmText: '',
       confirmType: 0,
-      readWrongText: "取消",
+      readWrongText: '取消',
       currentIndex: 0,
-      time: "1800",
+      time: '1800',
       endTime: null,
       testList: [
         {
           type: 0,
-          title: "title",
+          title: 'title',
           userAnswer: null
         },
         {
           type: 1,
-          title: "title",
-          options: ["A. 选项", "B. 选项", "C. 选项", "D. 选项"],
+          title: 'title',
+          options: ['A. 选项', 'B. 选项', 'C. 选项', 'D. 选项'],
           userAnswer: null
         },
         {
           type: 2,
-          title: "title",
-          options: ["A. 选项", "B. 选项", "C. 选项", "D. 选项"],
+          title: 'title',
+          options: ['A. 选项', 'B. 选项', 'C. 选项', 'D. 选项'],
           userAnswer: null
         }
       ]
-    };
+    }
   },
   computed: {
     duration() {
-      return this.fomart(this.time);
+      return this.fomart(this.time)
     },
     rest() {
-      return this.fomart(this.endTime);
+      return this.fomart(this.endTime)
     }
   },
   mounted() {
     this.$nextTick(function() {
-      this.updateTime();
-    });
-    let params = this.$route.params;
-	params = qs.stringify(params);
-	getExaminfoByTypeId(params)
-	.then(res => {
-		console.log(res.data)
-		const obj = res.data
-		this.testList = []
-		for(let i = 0;i< obj.length;i++) {
-			let temp = {}
-			temp.type = 2
-			temp.title = obj[i].name
-			temp.options = []
-			temp.options.push("A" +'\xa0\xa0\xa0' + obj[i].a)
-			temp.options.push("B" +'\xa0\xa0\xa0' + obj[i].b)
-			temp.options.push("C" + '\xa0\xa0\xa0' + obj[i].c)
-			temp.options.push("D" +'\xa0\xa0\xa0' + obj[i].d)
-			this.testList.push(temp)
-		}
-	})
+      this.updateTime()
+    })
+    let params = this.$route.params
+    params = qs.stringify(params)
+    getExaminfoByTypeId(params)
+      .then(res => {
+        console.log(res.data)
+        const obj = res.data
+        this.testList = []
+        for (let i = 0; i < obj.length; i++) {
+          const temp = {}
+          temp.type = 2
+          temp.title = obj[i].name
+          temp.options = []
+          temp.options.push('A' + '\xa0\xa0\xa0' + obj[i].a)
+          temp.options.push('B' + '\xa0\xa0\xa0' + obj[i].b)
+          temp.options.push('C' + '\xa0\xa0\xa0' + obj[i].c)
+          temp.options.push('D' + '\xa0\xa0\xa0' + obj[i].d)
+          this.testList.push(temp)
+        }
+      })
 
     // console.log(this.$router)
     // this.examtypeid = this.$router
@@ -201,147 +201,147 @@ export default {
     isSelected(item, index) {
       if (item.type === 2) {
         if (!item.userAnswer) {
-          return false;
+          return false
         }
         for (var answer of item.userAnswer) {
           if (answer === index) {
-            return true;
+            return true
           }
         }
-        return false;
+        return false
       } else {
-        return item.userAnswer === index;
+        return item.userAnswer === index
       }
-      return false;
+      return false
     },
     isDone(item) {
       if (item.type === 0) {
-        return item.userAnswer === 0 || item.userAnswer === 1;
+        return item.userAnswer === 0 || item.userAnswer === 1
       }
       if (item.type === 1) {
-        return item.userAnswer || item.userAnswer === 0;
+        return item.userAnswer || item.userAnswer === 0
       }
       if (item.type === 2) {
-        return item.userAnswer && item.userAnswer.length;
+        return item.userAnswer && item.userAnswer.length
       }
-      return false;
+      return false
     },
     selectOption(item, num, index) {
-      this.currentIndex = num;
+      this.currentIndex = num
       if (item.type === 2) {
-        var userAnswer = this.testList[this.currentIndex].userAnswer;
+        var userAnswer = this.testList[this.currentIndex].userAnswer
         if (!userAnswer) {
-          userAnswer = [];
+          userAnswer = []
         }
         if (userAnswer.contains(index)) {
           for (var i = 0; i < userAnswer.length; i++) {
             if (userAnswer[i] === index) {
-              userAnswer.splice(i, 1);
-              return;
+              userAnswer.splice(i, 1)
+              return
             }
           }
         }
-        userAnswer.push(index);
+        userAnswer.push(index)
 
-        userAnswer = userAnswer.sort();
-        this.testList[this.currentIndex].userAnswer = userAnswer;
+        userAnswer = userAnswer.sort()
+        this.testList[this.currentIndex].userAnswer = userAnswer
       } else {
-        this.testList[this.currentIndex].userAnswer = index;
+        this.testList[this.currentIndex].userAnswer = index
       }
     },
     selectIndex(index) {
-      this.currentIndex = index;
+      this.currentIndex = index
     },
     // 锚点选中和定位
     selectIndex(index) {
-      this.currentIndex = index;
-      var anchor = this.$el.querySelector("#anchor-" + index);
-      document.querySelector(".content-scroll").scrollTop = anchor.offsetTop; // 这里的 document.querySelector('.content-scroll') 是一个div容器，如果想让window滚动定位，换成window就好了
+      this.currentIndex = index
+      var anchor = this.$el.querySelector('#anchor-' + index)
+      document.querySelector('.content-scroll').scrollTop = anchor.offsetTop // 这里的 document.querySelector('.content-scroll') 是一个div容器，如果想让window滚动定位，换成window就好了
     },
     submitAnswer() {
       var that = this,
         answerArr = [],
-        answerLen;
+        answerLen
       this.testList.forEach(function(item, index) {
         if (item.userAnswer || item.userAnswer === 0) {
           if (item.type === 1 || item.type === 0) {
-            answerArr.push(that.numberToLetter(item.userAnswer));
+            answerArr.push(that.numberToLetter(item.userAnswer))
           } else if (item.type === 2) {
-            var arr = [];
+            var arr = []
             item.userAnswer.forEach(function(answer, index) {
-              arr.push(that.numberToLetter(answer));
-            });
-            answerArr.push(arr);
+              arr.push(that.numberToLetter(answer))
+            })
+            answerArr.push(arr)
           }
         }
-      });
-      answerLen = this.testList.length - answerArr.length;
+      })
+      answerLen = this.testList.length - answerArr.length
       if (answerLen == 0) {
-        this.confirmShow = !this.confirmShow;
-        this.confirmText = "您确认提交吗!";
+        this.confirmShow = !this.confirmShow
+        this.confirmText = '您确认提交吗!'
       } else {
-        this.alertShow = !this.alertShow;
-        this.alertText = "您还有" + answerLen + "题未做!";
+        this.alertShow = !this.alertShow
+        this.alertText = '您还有' + answerLen + '题未做!'
       }
     },
     updateTime() {
       var that = this,
-        time = this.time;
+        time = this.time
       this.timer = setInterval(function() {
-        time = time - 1;
-        that.endTime = time;
+        time = time - 1
+        that.endTime = time
         if (time === 0) {
-          clearInterval(that.timer);
-          that.alertShow = !this.alertShow;
-          that.alertType = 1;
-          that.alertText = "考试时间结束！";
+          clearInterval(that.timer)
+          that.alertShow = !this.alertShow
+          that.alertType = 1
+          that.alertText = '考试时间结束！'
         }
-      }, 1000);
+      }, 1000)
     },
     fomart(time) {
-      var h, m, s;
-      h = Math.floor(time / 3600);
-      m = Math.floor((time / 60) % 60);
-      s = Math.floor(time % 60);
-      h < 10 ? (h = "0" + h) : (h = h);
-      m < 10 ? (m = "0" + m) : (m = m);
-      s < 10 ? (s = "0" + s) : (s = s);
-      return h + ":" + m + ":" + s;
+      var h, m, s
+      h = Math.floor(time / 3600)
+      m = Math.floor((time / 60) % 60)
+      s = Math.floor(time % 60)
+      h < 10 ? (h = '0' + h) : (h = h)
+      m < 10 ? (m = '0' + m) : (m = m)
+      s < 10 ? (s = '0' + s) : (s = s)
+      return h + ':' + m + ':' + s
     },
     numberToLetter(number) {
-      var arr = "ABCD";
-      return arr[number];
+      var arr = 'ABCD'
+      return arr[number]
     },
     onConfirm() {
-      var that = this;
+      var that = this
       if (this.confirmType === 1) {
-        this.$router.push({ path: "/" });
+        this.$router.push({ path: '/' })
       } else {
-        clearInterval(this.timer);
+        clearInterval(this.timer)
         setTimeout(function() {
-          that.viewScore();
-        }, 500);
+          that.viewScore()
+        }, 500)
       }
     },
     viewScore() {
-      this.confirmShow = !this.confirmShow;
-      this.confirmType = 1;
-      this.confirmTitle = "成绩";
-      this.confirmText = "您的得分：70";
-      this.readWrongText = "查看错题";
+      this.confirmShow = !this.confirmShow
+      this.confirmType = 1
+      this.confirmTitle = '成绩'
+      this.confirmText = '您的得分：70'
+      this.readWrongText = '查看错题'
     },
     onCancel() {
       if (this.confirmType === 1) {
-        alert("进入错题中...");
+        alert('进入错题中...')
       }
     },
     onHide() {
       if (this.alertType === 1) {
-        this.$router.push({ path: "/" });
+        this.$router.push({ path: '/' })
       }
     }
   }
-};
+}
 </script>
 
 <style lang="less">

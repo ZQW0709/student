@@ -1,289 +1,288 @@
 <template>
-	<div class="examination-wrap bg-white">
-		<div class="examination-content">
-			<h4 class="examination-title">考试标题</h4>
-			<p class="examination-info">
-				<span>题量：9</span>
-				<span>总分：100</span>
-				<span>合格：60</span>
-				<span>答题时间：{{duration}}</span>
-			</p>
-			<ul class="examination-question-list">
-				<li  :id="'anchor-'+num" v-for="(items,num) in testList" :key="num">
-					<h5>{{ num +1 }}．{{items.title}}
-						<span  v-if="items.type === 0">［判断题］</span>
-						<span  v-if="items.type === 1">［单选题］</span>
-						<span  v-if="items.type === 2">［多选题］</span>
-					</h5>
-					<div v-if="items.type == 0">
-						<div class="answer-list">
-							<p>A. 正确</p>
-							<p>B. 错误</p>
-						</div>
-						<div class="check-content">
-							<span :class="{active: isSelected(items, 0)}" @click="selectOption(items,num,0)"><i class="iconfont icon-gouxuan"></i>A</span>
-							<span :class="{active: isSelected(items, 1)}" @click="selectOption(items,num,1)"><i class="iconfont icon-gouxuan"></i>B</span>
-						</div>
-					</div>
-					<div v-else>
-						<div class="answer-list">
-							<p v-for="(item, index) in items.options" :key="index">{{item}}</p>
-						</div>
-						<div class="check-content">
-							<span v-for="(item, index) in items.options" :key="index" :class="{active: isSelected(items, index)}" @click="selectOption(items,num,index)"><i class="iconfont icon-gouxuan"></i>{{numberToLetter(index)}}</span>
-						</div>
-					</div>
-				</li>
-			</ul>
-		</div>
-		<div class="cutdown-submit-wrap bg-white">
-			<div class="examination-num">
-				<a href="javascript:;" @click="selectIndex(index)" class="num-item" v-for="(item,index) in testList" :class="{selected: isDone(item), current: index === currentIndex}" :key="index">{{index + 1}}</a>
-			</div>
-			<div class="cutdown-content">
-				<span class="cutdown-text">剩余时间：<span class="red">{{rest}}</span></span>
-				<x-button mini class="examination-submit-btn" @click.native="submitAnswer">提交试卷</x-button>
-			</div>
-		</div>
-		<!-- 提示弹窗  start-->
-		<div v-transfer-dom>
-		    <confirm v-model="confirmShow" :cancel-text="readWrongText" :title="confirmTitle" @on-cancel="onCancel" @on-confirm="onConfirm">
-		        <p style="text-align:center;">{{ confirmText }}</p>
-		    </confirm>
-	    </div>
-	    <div v-transfer-dom>
-	    	<alert v-model="alertShow" :title="alertTitle" @on-hide="onHide"> {{ alertText }}</alert>
-	    </div>
-	    <!-- 提示弹窗  end-->
-	</div>
+  <div class="examination-wrap bg-white">
+    <div class="examination-content">
+      <h4 class="examination-title">考试标题</h4>
+      <p class="examination-info">
+        <span>题量：9</span>
+        <span>总分：100</span>
+        <span>合格：60</span>
+        <span>答题时间：{{ duration }}</span>
+      </p>
+      <ul class="examination-question-list">
+        <li v-for="(items,num) in testList" :id="'anchor-'+num" :key="num">
+          <h5>{{ num +1 }}．{{ items.title }}
+            <span v-if="items.type === 0">［判断题］</span>
+            <span v-if="items.type === 1">［单选题］</span>
+            <span v-if="items.type === 2">［多选题］</span>
+          </h5>
+          <div v-if="items.type == 0">
+            <div class="answer-list">
+              <p>A. 正确</p>
+              <p>B. 错误</p>
+            </div>
+            <div class="check-content">
+              <span :class="{active: isSelected(items, 0)}" @click="selectOption(items,num,0)"><i class="iconfont icon-gouxuan"/>A</span>
+              <span :class="{active: isSelected(items, 1)}" @click="selectOption(items,num,1)"><i class="iconfont icon-gouxuan"/>B</span>
+            </div>
+          </div>
+          <div v-else>
+            <div class="answer-list">
+              <p v-for="(item, index) in items.options" :key="index">{{ item }}</p>
+            </div>
+            <div class="check-content">
+              <span v-for="(item, index) in items.options" :key="index" :class="{active: isSelected(items, index)}" @click="selectOption(items,num,index)"><i class="iconfont icon-gouxuan"/>{{ numberToLetter(index) }}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="cutdown-submit-wrap bg-white">
+      <div class="examination-num">
+        <a v-for="(item,index) in testList" :class="{selected: isDone(item), current: index === currentIndex}" :key="index" href="javascript:;" class="num-item" @click="selectIndex(index)">{{ index + 1 }}</a>
+      </div>
+      <div class="cutdown-content">
+        <span class="cutdown-text">剩余时间：<span class="red">{{ rest }}</span></span>
+        <x-button mini class="examination-submit-btn" @click.native="submitAnswer">提交试卷</x-button>
+      </div>
+    </div>
+    <!-- 提示弹窗  start-->
+    <div v-transfer-dom>
+      <confirm v-model="confirmShow" :cancel-text="readWrongText" :title="confirmTitle" @on-cancel="onCancel" @on-confirm="onConfirm">
+        <p style="text-align:center;">{{ confirmText }}</p>
+      </confirm>
+    </div>
+    <div v-transfer-dom>
+      <alert v-model="alertShow" :title="alertTitle" @on-hide="onHide"> {{ alertText }}</alert>
+    </div>
+    <!-- 提示弹窗  end-->
+  </div>
 </template>
- 
+
 <script>
 // 多选题数组选项处理
-Array.prototype.contains = function (obj) {
-    var i = this.length
-    while (i--) {
-        if (this[i] === obj) {
-            return true
-        }
-    }
-    return false
-}
 import { XButton, Confirm, Alert, TransferDomDirective as TransferDom } from 'vux'
+Array.prototype.contains = function(obj) {
+  var i = this.length
+  while (i--) {
+    if (this[i] === obj) {
+      return true
+    }
+  }
+  return false
+}
 export default {
-	directives: {
+  directives: {
 	    TransferDom
-	},
-	components: {
-		XButton,
-		Confirm,
-		Alert
-	},
-	data () {
-		return {
-			alertShow: false,
-			alertTitle: '提示',
-			alertText: '',
-			alertType: 0,
-			confirmShow: false,
-			confirmTitle: '提示',
-			confirmText: '',
-			confirmType: 0,
-			readWrongText: '取消',
-			currentIndex: 0,
-            time: '1800',
-            endTime: null,
-			testList: [
-				{
-					type: 0,
-					title: 'title',
-					userAnswer: null
-				},
-				{
-					type: 1,
-					title: 'title',
-					options:[
-						'A. 选项',
-						'B. 选项',
-						'C. 选项',
-						'D. 选项'
-					],
-					userAnswer: null
-				},
-				{
-					type: 2,
-					title: 'title',
-					options:[
-						'A. 选项',
-						'B. 选项',
-						'C. 选项',
-						'D. 选项'
-					],
-					userAnswer: null
-				},
-				
-			]
-		}
-	},
-	computed: {
-        duration () {
-            return this.fomart(this.time);
+  },
+  components: {
+    XButton,
+    Confirm,
+    Alert
+  },
+  data() {
+    return {
+      alertShow: false,
+      alertTitle: '提示',
+      alertText: '',
+      alertType: 0,
+      confirmShow: false,
+      confirmTitle: '提示',
+      confirmText: '',
+      confirmType: 0,
+      readWrongText: '取消',
+      currentIndex: 0,
+      time: '1800',
+      endTime: null,
+      testList: [
+        {
+          type: 0,
+          title: 'title',
+          userAnswer: null
         },
-		rest () {
-			return this.fomart(this.endTime);
-		}
+        {
+          type: 1,
+          title: 'title',
+          options: [
+            'A. 选项',
+            'B. 选项',
+            'C. 选项',
+            'D. 选项'
+          ],
+          userAnswer: null
+        },
+        {
+          type: 2,
+          title: 'title',
+          options: [
+            'A. 选项',
+            'B. 选项',
+            'C. 选项',
+            'D. 选项'
+          ],
+          userAnswer: null
+        }
+
+      ]
+    }
+  },
+  computed: {
+    duration() {
+      return this.fomart(this.time)
     },
-    mounted() {
-        this.$nextTick(function () {
-            this.updateTime();
-        })
+    rest() {
+      return this.fomart(this.endTime)
+    }
+  },
+  mounted() {
+    this.$nextTick(function() {
+      this.updateTime()
+    })
+  },
+  methods: {
+    isSelected(item, index) {
+      if (item.type === 2) {
+        if (!item.userAnswer) {
+          return false
+        }
+        for (var answer of item.userAnswer) {
+          if (answer === index) {
+            return true
+          }
+        }
+        return false
+      } else {
+        return item.userAnswer === index
+      }
+      return false
     },
-    methods: {
-        isSelected(item, index) {
-            if (item.type === 2) {
-                if (!item.userAnswer) {
-                    return false
-                }
-                for (var answer of item.userAnswer) {
-                    if (answer === index) {
-                        return true
-                    }
-                }
-                return false
-            } else {
-                return item.userAnswer === index
+    isDone(item) {
+      if (item.type === 0) {
+        return item.userAnswer === 0 || item.userAnswer === 1
+      }
+      if (item.type === 1) {
+        return item.userAnswer || item.userAnswer === 0
+      }
+      if (item.type === 2) {
+        return item.userAnswer && item.userAnswer.length
+      }
+      return false
+    },
+    selectOption(item, num, index) {
+      this.currentIndex = num
+      if (item.type === 2) {
+        var userAnswer = this.testList[this.currentIndex].userAnswer
+        if (!userAnswer) {
+          userAnswer = []
+        }
+        if (userAnswer.contains(index)) {
+          for (var i = 0; i < userAnswer.length; i++) {
+            if (userAnswer[i] === index) {
+              userAnswer.splice(i, 1)
+              return
             }
-            return false
-        },
-        isDone(item) {
-			if (item.type === 0) {
-				return item.userAnswer === 0 || item.userAnswer === 1
-			}
-            if (item.type === 1) {
-                return item.userAnswer || item.userAnswer === 0
-            }
-            if (item.type === 2) {
-                return item.userAnswer && item.userAnswer.length
-            }
-            return false
-        },
-        selectOption(item, num, index) {
-            this.currentIndex = num;
-            if (item.type === 2) {
-                var userAnswer = this.testList[this.currentIndex].userAnswer
-                if (!userAnswer) {
-                    userAnswer = []
-                }
-                if (userAnswer.contains(index)) {
-                    for (var i = 0; i < userAnswer.length; i++) {
-                        if (userAnswer[i] === index) {
-                            userAnswer.splice(i, 1)
-                            return
-                        }
-                    }
-                }
-                userAnswer.push(index)
-                
-                userAnswer = userAnswer.sort()
-                this.testList[this.currentIndex].userAnswer = userAnswer
-            } else {
-                this.testList[this.currentIndex].userAnswer = index
-            }
-        },
-        selectIndex(index) {
-            this.currentIndex = index
-        },
-        // 锚点选中和定位
-        selectIndex(index) {
-            this.currentIndex = index;
-            var anchor = this.$el.querySelector('#anchor-'+index);
-            document.querySelector('.content-scroll').scrollTop = anchor.offsetTop; // 这里的 document.querySelector('.content-scroll') 是一个div容器，如果想让window滚动定位，换成window就好了
-        },
-        submitAnswer() {
-            var that = this,answerArr = [],answerLen;
-            this.testList.forEach(function (item, index) {
-                if (item.userAnswer || item.userAnswer === 0) {
-                    if (item.type === 1 || item.type === 0) {
-                        answerArr.push(that.numberToLetter(item.userAnswer))
-                    } else if (item.type === 2) {
-                        var arr = [];
-                        item.userAnswer.forEach(function (answer, index) {
-                            arr.push(that.numberToLetter(answer))
-                        })
-                        answerArr.push(arr)
-                    }
-                }
+          }
+        }
+        userAnswer.push(index)
+
+        userAnswer = userAnswer.sort()
+        this.testList[this.currentIndex].userAnswer = userAnswer
+      } else {
+        this.testList[this.currentIndex].userAnswer = index
+      }
+    },
+    selectIndex(index) {
+      this.currentIndex = index
+    },
+    // 锚点选中和定位
+    selectIndex(index) {
+      this.currentIndex = index
+      var anchor = this.$el.querySelector('#anchor-' + index)
+      document.querySelector('.content-scroll').scrollTop = anchor.offsetTop // 这里的 document.querySelector('.content-scroll') 是一个div容器，如果想让window滚动定位，换成window就好了
+    },
+    submitAnswer() {
+      var that = this, answerArr = [], answerLen
+      this.testList.forEach(function(item, index) {
+        if (item.userAnswer || item.userAnswer === 0) {
+          if (item.type === 1 || item.type === 0) {
+            answerArr.push(that.numberToLetter(item.userAnswer))
+          } else if (item.type === 2) {
+            var arr = []
+            item.userAnswer.forEach(function(answer, index) {
+              arr.push(that.numberToLetter(answer))
             })
-            answerLen = this.testList.length - answerArr.length;
-            if (answerLen == 0) {
-				this.confirmShow = !this.confirmShow;
-				this.confirmText = '您确认提交吗!';
-            } else {
-                this.alertShow = !this.alertShow;
-                this.alertText = '您还有' + answerLen + '题未做!';
-            }
-        },
-        updateTime() {
-            var that = this,time = this.time;
-            this.timer = setInterval(function () {
-                time = time - 1;
-                that.endTime = time;
-				if (time === 0){
-					clearInterval(that.timer);
-					that.alertShow = !this.alertShow;
-					that.alertType = 1;
-                	that.alertText = '考试时间结束！';
-				}
-            }, 1000)
-        },
-        fomart(time) {
-			var h,m,s;
-            h = Math.floor(time / 3600); 
-            m = Math.floor(time / 60 % 60);
-            s = Math.floor(time % 60); 
-            h < 10 ? h = '0' + h : h = h; 
-            m < 10 ? m = '0' + m : m = m;
-            s < 10 ? s = '0' + s : s = s;
-            return h + ':' + m + ':' + s;
-        },
-        numberToLetter(number) {
-            var arr = 'ABCD'
-            return arr[number]
-        },
+            answerArr.push(arr)
+          }
+        }
+      })
+      answerLen = this.testList.length - answerArr.length
+      if (answerLen == 0) {
+        this.confirmShow = !this.confirmShow
+        this.confirmText = '您确认提交吗!'
+      } else {
+        this.alertShow = !this.alertShow
+        this.alertText = '您还有' + answerLen + '题未做!'
+      }
+    },
+    updateTime() {
+      var that = this, time = this.time
+      this.timer = setInterval(function() {
+        time = time - 1
+        that.endTime = time
+        if (time === 0) {
+          clearInterval(that.timer)
+          that.alertShow = !this.alertShow
+          that.alertType = 1
+                	that.alertText = '考试时间结束！'
+        }
+      }, 1000)
+    },
+    fomart(time) {
+      var h, m, s
+      h = Math.floor(time / 3600)
+      m = Math.floor(time / 60 % 60)
+      s = Math.floor(time % 60)
+      h < 10 ? h = '0' + h : h = h
+      m < 10 ? m = '0' + m : m = m
+      s < 10 ? s = '0' + s : s = s
+      return h + ':' + m + ':' + s
+    },
+    numberToLetter(number) {
+      var arr = 'ABCD'
+      return arr[number]
+    },
 	    onConfirm() {
-	    	var that = this;
-	    	if ( this.confirmType === 1 ){
-	    		this.$router.push({path: '/'})
+	    	var that = this
+	    	if (this.confirmType === 1) {
+	    		this.$router.push({ path: '/' })
 	    	} else {
-	    		clearInterval(this.timer);
+	    		clearInterval(this.timer)
 	    		setTimeout(function() {
-	    			that.viewScore();
-	    		},500)
+	    			that.viewScore()
+	    		}, 500)
 	    	}
-			     	
 	    },
 	    viewScore() {
-	    	this.confirmShow = !this.confirmShow;
-    		this.confirmType = 1;
-			this.confirmTitle = '成绩';
-			this.confirmText = '您的得分：70';
-			this.readWrongText = '查看错题';
+	    	this.confirmShow = !this.confirmShow
+    		this.confirmType = 1
+      this.confirmTitle = '成绩'
+      this.confirmText = '您的得分：70'
+      this.readWrongText = '查看错题'
 	    },
 	    onCancel() {
-	    	if ( this.confirmType === 1 ){
+	    	if (this.confirmType === 1) {
 	    		alert('进入错题中...')
-	    	} 
+	    	}
 	    },
 	    onHide() {
-	    	if (this.alertType === 1){
-	    		this.$router.push({path: '/'})
+	    	if (this.alertType === 1) {
+	    		this.$router.push({ path: '/' })
 	    	}
 	    }
- 
-    }
+
+  }
 }
 </script>
- 
+
 <style lang="less">
 .examination-content{
 	padding-bottom: 60px;
@@ -303,7 +302,7 @@ export default {
 		}
 	}
 	.examination-question-list{
-		padding:  0 10px 20px;	
+		padding:  0 10px 20px;
 		font-size: .7rem;
 		h5{
 			font-size: .75rem;
@@ -361,9 +360,9 @@ export default {
 				border-color: #09BB07;
 				background-color: #09BB07;
 			}
-			
+
 		}
-	} 
+	}
 	.cutdown-content{
 		margin-top: 5px;
 		.cutdown-text{

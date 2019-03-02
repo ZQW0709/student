@@ -2,15 +2,14 @@
   <div class="user-info">
     <!-- <divider>default</divider> -->
     <!-- <box gap="10px 10px"> -->
-      <el-select v-model="value" filterable placeholder="请选择">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
-      <x-button mini type="primary">答题</x-button>
+    <el-select v-model="value" filterable placeholder="请选择">
+      <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"/>
+    </el-select>
+    <x-button mini type="primary">答题</x-button>
     <!-- </box> -->
   </div>
 </template>
@@ -19,10 +18,9 @@
 import { XButton, Box, GroupTitle, Group, Flexbox, FlexboxItem, Divider } from 'vux'
 import { getAllexamtype } from '@/api/problem'
 
-
 export default {
   components: {
-    XButton,
+    XButton
     // Box,
     // GroupTitle,
     // Group,
@@ -30,38 +28,37 @@ export default {
     // FlexboxItem,
     // Divider
   },
-  methods: {
-    change (value) {
-      console.log('change:', value)
-    },
-    processButton001 () {
-      this.submit001 = 'processing'
-      this.disable001 = true
-    }
-  },
-  data () {
+  data() {
     return {
       submit001: 'click me',
       disable001: false,
       options: [],
-      value:''
+      value: ''
     }
   },
-   created(){
-     getAllexamtype()
-    .then(res => {
+  created() {
+    getAllexamtype()
+      .then(res => {
         // console.log(res.data)
         this.options = []
-        const obj = res.data;
+        const obj = res.data
         for (let i = 0; i < obj.length; i++) {
-        let tempList = {};
-        tempList.value = obj[i].id;
-        tempList.label = obj[i].name;
-        this.options.push(tempList);
-      }
-
-    })
+          const tempList = {}
+          tempList.value = obj[i].id
+          tempList.label = obj[i].name
+          this.options.push(tempList)
+        }
+      })
   },
+  methods: {
+    change(value) {
+      console.log('change:', value)
+    },
+    processButton001() {
+      this.submit001 = 'processing'
+      this.disable001 = true
+    }
+  }
 }
 </script>
 

@@ -1,7 +1,7 @@
 export default function Toast(message, duration) {
   duration = isNaN(duration) ? 3000 : duration
   let toast = document.createElement('div')
-  let text = document.createElement('span')
+  const text = document.createElement('span')
   text.innerText = message
   text.style.cssText = 'background: #000; opacity: 0.5; border-radius: 3px; padding: 5px;'
   toast.appendChild(text)

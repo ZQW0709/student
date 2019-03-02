@@ -6,14 +6,14 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      content: {
-        type: String,
-        default: 'Loading...'
-      }
+export default {
+  props: {
+    content: {
+      type: String,
+      default: 'Loading...'
     }
   }
+}
 </script>
 
 <style lang="scss">

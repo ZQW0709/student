@@ -1,5 +1,46 @@
 <template>
   <div class="user-info">
+    <template>
+  <div>
+    <v-chart ref="demo" :data="studentData" >
+      <v-scale x field="examinfoname" />
+      <v-scale y field="percent" :min="0" :max="0.5" :formatter="formatter" />
+      <v-bar series-field="calculation" adjust="stack" />
+      <v-tooltip show-value-in-legend />
+    </v-chart>
+
+    <x-button type="primary" plain @click.native="$refs.demo.rerender()">rerender</x-button>
+  </div>
+  <div style="padding:0 15px;">
+      <x-table >
+        <thead>
+          <tr>
+            <th>题目类型</th>
+            <th>时间</th>
+            <th>正确率</th>
+          </tr>
+        </thead>
+         <tr v-for="(item, index) in tableData6" :key="index">
+                    <th>{{item.examinfoname}}</th>
+                    <th>{{item.createtime}}</th>
+                    <th>{{item.grade}}%</th>
+                    </tr>
+        <!-- <tbody>
+          <tr>
+            <td>Apple</td>
+            <td>$1.25</td>
+          </tr>
+          <tr>
+            <td>Banana</td>
+            <td>$1.20</td>
+          </tr>
+        </tbody> -->
+        <tbody id="tbody">
+		 </tbody>
+      </x-table>
+    </div>
+
+</template>
     <template v-if="!childView">
       <mt-header fixed title="选择题目">
       </mt-header>
@@ -17,23 +58,22 @@
 </template>
       <app-footer class="main-footer"></app-footer>
     </template>
-    <router-view></router-view>
     <toast v-model="showPositionValue" type="warn" :time="800" is-show-mask text="请选择题目类型" position="middle"></toast>
   </div>
 </template>
 
 <script>
-import { deleteCookie } from '@/utils'
-import { XButton,Divider } from 'vux'
+import { deleteCookie, formatDate } from '@/utils'
 // import { logout, getUser, modifyAvatar } from '@/api/user'
 
-import { getAllexamtype } from '@/api/problem'
+import { getAllexamtype, selectStudentsanswer } from '@/api/problem'
+import qs from 'qs'
 
 // import Toast from '@/components/toast'
 import AppFooter from 'components/app-footer.vue'
 import { gender } from '@/constant'
 import loading from '@/assets/loading.gif'
-import { Toast } from 'vux'
+import { Toast, VChart, VLine, VArea, VTooltip, VLegend, VBar, XButton, VScale, Divider, XTable } from 'vux'
 
 export default {
   name: 'userInfo',
@@ -41,38 +81,94 @@ export default {
     return {
       imgUrl: loading,
       childView: false,
-      stuInfo:{},
+      stuInfo: {},
       options: [],
+      sel: this,
         value: '',
-        showPositionValue:false,
+        showPositionValue: false,
+        formatter: function(val) {
+          // console.log(val)
+        return (val * 100).toFixed(0) + '%'
+      },
+      studentData: [
+        { calculation: '正确率', examinfoname: '1750',  percent: 0.24511278195488723 }
+      ],
+      tableData6: [],
+      page: 1,
+      limit: 8,
+      studentid: 1
     }
   },
   components: {
+    XTable,
     AppFooter,
     XButton,
     Divider,
-    Toast
+    Toast,
+    VChart,
+    VLine,
+    VArea,
+    VTooltip,
+    VLegend,
+    VBar,
+    XButton,
+    VScale
   },
-  created(){
+  mounted() {
      getAllexamtype()
     .then(res => {
-        // console.log(res.data)
         this.options = []
-        const obj = res.data;
+        const obj = res.data
         for (let i = 0; i < obj.length; i++) {
-        let tempList = {};
-        tempList.value = obj[i].id;
-        tempList.label = obj[i].name;
-        this.options.push(tempList);
+        let tempList = {}
+        tempList.value = obj[i].id
+        tempList.label = obj[i].name
+        this.options.push(tempList)
       }
-
     })
+    this.getStudentAnswer()
   },
   methods: {
+    getStudentAnswer() {
+      let params = {
+        page: this.page,
+        limit: this.limit,
+        studentid: this.studentid
+      }
+      params = qs.stringify(params)
+      selectStudentsanswer(params)
+      .then(res => {
+        const obj = res.data.data
+        this.studentData = []
+        for (let i = 0; i < obj.length; i++) {
+          let tempData = {}
+          tempData.calculation = '正确率',
+          tempData.examinfoname =  i + 1
+          tempData.percent = obj[i].grade / 100
+          this.studentData.push(tempData)
+          tempData = {}
+          tempData.calculation = '错误率',
+          tempData.examinfoname =  i + 1
+          tempData.percent = 1 - obj[i].grade / 100
+          this.studentData.push(tempData)
+        }
+
+        this.tableData6 = []
+        for (let i = 0; i < obj.length; i++) {
+          let tempData = {}
+          tempData.examinfoname = obj[i].examinfoname
+          var time = obj[i].createtime
+          var d = new Date(time)
+          tempData.createtime = obj[i].createtime
+          tempData.grade = obj[i].grade
+          this.tableData6.push(tempData)
+        }
+
+        // this.$refs.demo.rerender()
+      })
+    },
     response() {
-      // console.log("????")
-      console.log(this.value)
-      if(this.value.length == 0) {
+      if (this.value.length == 0) {
         this.showPositionValue = true
         return
       }
@@ -81,29 +177,28 @@ export default {
       }
       // this.$router.push('/response',)
       this.$router.push({
-        name:'response',
+        name: 'response',
         params: params
       })
-
     },
     fetch() {
-      this.stuInfo = JSON.parse(sessionStorage.localLogin);
+      this.stuInfo = JSON.parse(sessionStorage.localLogin)
 
       console.log(this.stuInfo)
     },
-    getGender(code) { //性别
+    getGender(code) { // 性别
       if (code === '1') return '男'
       if (code === '0') return '女'
       return '未知'
     },
-    logout() {  //退出
-      var storage=window.sessionStorage;
-      storage.clear();
+    logout() {  // 退出
+      var storage = window.sessionStorage
+      storage.clear()
       this.$router.push('/login')
     },
     modifyInfo(userId) {
       this.$router.push('/user-info/modify-info/' + this.stuInfo.id)
-    },
+    }
   },
   // created() {
   //   if (this.$route.name !== 'userInfo') this.childView = true

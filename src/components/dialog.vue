@@ -2,22 +2,22 @@
   <div class="dialog-wrapper">
     <div class="dialog-content">
       <header class="header">
-        <slot name="header"></slot>
+        <slot name="header"/>
       </header>
       <main class="main">
-        <slot></slot>
+        <slot/>
       </main>
       <footer class="footer">
-        <slot name="footer"></slot>
+        <slot name="footer"/>
       </footer>
     </div>
   </div>
 </template>
 
 <script>
-  export default {
+export default {
 
-  }
+}
 </script>
 
 <style lang="scss">

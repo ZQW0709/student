@@ -1,29 +1,29 @@
 <template>
   <transition mode="in-out">
-    <div v-if="$route.name === 'userOrder'" class="user-order" key="userOrder">
+    <div v-if="$route.name === 'userOrder'" key="userOrder" class="user-order">
       <mt-header fixed title="我的邀约">
-        <router-link to="/user-info" slot="left">
-          <mt-button icon="back"></mt-button>
+        <router-link slot="left" to="/user-info">
+          <mt-button icon="back"/>
         </router-link>
       </mt-header>
       <div class="order-list">
         <ul>
-          <li @click="goDetail(item.id)" :key="index" v-for="(item, index) in orderList">
+          <li v-for="(item, index) in orderList" :key="index" @click="goDetail(item.id)">
             <div class="order-title">
-              <span>{{item.title}}</span>
+              <span>{{ item.title }}</span>
             </div>
             <div class="order-secondary">
-              <span class="creator">{{item.creatorName}}</span>
-              <span class="time">{{getInterval(item.createTime)}}</span>
+              <span class="creator">{{ item.creatorName }}</span>
+              <span class="time">{{ getInterval(item.createTime) }}</span>
             </div>
           </li>
         </ul>
       </div>
-      <div class="no-date" v-if="orderList.length === 0">
+      <div v-if="orderList.length === 0" class="no-date">
         <img src="../../assets/no-date.png">
       </div>
     </div>
-    <router-view v-else key="userOrderDetail"></router-view>
+    <router-view v-else key="userOrderDetail"/>
   </transition>
 </template>
 
@@ -37,6 +37,9 @@ export default {
     return {
       orderList: []
     }
+  },
+  created() {
+    this.fetch()
   },
   methods: {
     back() {
@@ -57,9 +60,6 @@ export default {
       }).catch(e => this.$root.$data.setLoading(false))
     },
     getInterval
-  },
-  created() {
-    this.fetch()
   }
 }
 </script>

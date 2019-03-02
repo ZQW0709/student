@@ -47,7 +47,7 @@ export function getUserInfo() {
 }
 
 export function modifyAvatar(file, userId) {
-  let formData = new FormData()
+  const formData = new FormData()
   formData.append('avatarFile', file)
   formData.append('userId', userId)
   return request({

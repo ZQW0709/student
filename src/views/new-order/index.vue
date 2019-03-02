@@ -2,12 +2,12 @@
   <transition>
     <div class="new-order">
       <mt-header fixed title="发起邀约">
-        <router-link to="/homepage" slot="left">
-          <mt-button icon="back"></mt-button>
+        <router-link slot="left" to="/homepage">
+          <mt-button icon="back"/>
         </router-link>
       </mt-header>
       <div class="order-form">
-        <mt-field label="标题" v-model="order.title"></mt-field>
+        <mt-field v-model="order.title" label="标题"/>
         <mt-cell title="城市" class="form-ceil">
           <span>{{ order.city }}</span>
           <mt-button size="small" type="default" @click="cityPopupVisible = true">选择</mt-button>
@@ -16,11 +16,10 @@
           v-model="cityPopupVisible"
           class="mint-popup"
           position="bottom">
-          <mt-picker :slots="slots" @change="onValuesChange">
-          </mt-picker>
+          <mt-picker :slots="slots" @change="onValuesChange"/>
           <mt-button size="small" class="submit-btn" @click="selectCity">确 定</mt-button>
         </mt-popup>
-        <mt-field label="地点" v-model="order.location"></mt-field>
+        <mt-field v-model="order.location" label="地点"/>
         <mt-cell title="开始时间">
           <span class="select-time">{{ order.startTime.format("yyyy-MM-dd") }}</span>
           <mt-button type="default" size="small" @click="openPicker('startTime')">选择</mt-button>
@@ -29,13 +28,12 @@
           <span class="select-time">{{ order.endTime.format("yyyy-MM-dd") }}</span>
           <mt-button type="default" size="small" @click="openPicker('endTime')">选择</mt-button>
         </mt-cell>
-        <mt-field label="备注" type="textarea" rows="4" v-model="order.remark"></mt-field>
+        <mt-field v-model="order.remark" label="备注" type="textarea" rows="4"/>
         <mt-datetime-picker
           ref="picker"
+          :start-date="new Date()"
           type="date"
-          :startDate="new Date()"
-          @confirm="handleConfirm">
-        </mt-datetime-picker>
+          @confirm="handleConfirm"/>
         <mt-button class="submit-btn" type="primary" @click="submit">提交</mt-button>
       </div>
     </div>
@@ -93,7 +91,7 @@ export default {
       this.$refs.picker.open()
     },
     isValid() {
-      let { title, city, location, startTime, endTime, remark } = this.order
+      const { title, city, location, startTime, endTime, remark } = this.order
       if (!title) {
         Toast({
           message: '请填写标题',
@@ -147,7 +145,7 @@ export default {
     },
     submit() {
       if (!this.isValid()) return
-      let order = {
+      const order = {
         title: this.order.title,
         city: this.order.city,
         location: this.order.location,

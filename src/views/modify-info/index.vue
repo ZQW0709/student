@@ -2,50 +2,46 @@
   <transition>
     <div class="modify-info">
       <mt-header fixed title="修改个人信息">
-        <router-link to="/user-info" slot="left">
-          <mt-button icon="back"></mt-button>
+        <router-link slot="left" to="/user-info">
+          <mt-button icon="back"/>
         </router-link>
       </mt-header>
       <div class="modify-info-form">
-        <mt-field label="昵称" v-model="stuInfo.stuname"></mt-field>
-        <mt-field label="账号" v-model="stuInfo.login"></mt-field>
+        <mt-field v-model="stuInfo.stuname" label="昵称"/>
+        <mt-field v-model="stuInfo.login" label="账号"/>
         <mt-cell title="性别" class="form-ceil">
           <span v-if="stuInfo.sex === '1'">男</span>
           <span v-if="stuInfo.sex === '0'">女</span>
           <!-- <span v-else>未知</span> -->
-          
-          <i class="iconfont icon-jiantouyou" @click="genderActionVisible = true"></i>
+
+          <i class="iconfont icon-jiantouyou" @click="genderActionVisible = true"/>
         </mt-cell>
         <mt-actionsheet
           :actions="[
             { name: '男', method: setValue.bind(null, 'gender', 'male') },
             { name: '女', method: setValue.bind(null, 'gender', 'female') }
           ]"
-          v-model="genderActionVisible">
-        </mt-actionsheet>
+          v-model="genderActionVisible"/>
         <mt-cell title="地址" class="form-ceil">
-          <span>{{stuInfo.address}}</span>
-          <i class="iconfont icon-jiantouyou" @click="cityPopupVisible = true"></i>
+          <span>{{ stuInfo.address }}</span>
+          <i class="iconfont icon-jiantouyou" @click="cityPopupVisible = true"/>
         </mt-cell>
         <!-- <mt-field label="年龄" v-model="stuInfo.age" type="number"></mt-field> -->
 
-        
         <mt-popup
           v-model="cityPopupVisible"
           class="mint-popup"
           position="bottom">
-          <mt-picker :slots="slots" @change="onValuesChange">
-          </mt-picker>
+          <mt-picker :slots="slots" @change="onValuesChange"/>
           <mt-button size="small" class="submit-btn" @click="selectCity">确 定</mt-button>
         </mt-popup>
         <!--<mt-field label="邮箱" v-model="stuInfo.email" type="email"></mt-field>-->
-        <mt-field label="手机号" v-model="stuInfo.phone" type="tel"></mt-field>
+        <mt-field v-model="stuInfo.phone" label="手机号" type="tel"/>
         <!-- <mt-field label="微信号" v-model="stuInfo.wechat"></mt-field> -->
-        <mt-field label="QQ号" v-model="stuInfo.qq" type="number"></mt-field>
-        <mt-field label="专业" v-model="stuInfo.profession" ></mt-field>
-        <mt-field label="学校名称" v-model="stuInfo.campusid" ></mt-field>
-        <mt-field label="班级名称" v-model="stuInfo.classinfoid" ></mt-field>
-
+        <mt-field v-model="stuInfo.qq" label="QQ号" type="number"/>
+        <mt-field v-model="stuInfo.profession" label="专业" />
+        <mt-field v-model="stuInfo.campusid" label="学校名称" />
+        <mt-field v-model="stuInfo.classinfoid" label="班级名称" />
 
         <!-- <mt-field label="旧密码" v-model="stuInfo.password" type="password"></mt-field>
         <mt-field label="新密码" v-model="stuInfo.newPassword" type="password"></mt-field>
@@ -60,7 +56,7 @@
 <script>
 // import { modify, getUser } from '@/api/user'
 import qs from 'qs'
-import { updateStudent} from '@/api/login'
+import { updateStudent } from '@/api/login'
 import MyToast from '@/components/toast'
 import { Toast } from 'mint-ui'
 import { gender } from '@/constant'
@@ -95,15 +91,15 @@ export default {
       ]
     }
   },
-  created(){
+  created() {
     this.fetch()
   },
   methods: {
     fetch() {
-      this.stuInfo = JSON.parse(sessionStorage.localLogin);
+      this.stuInfo = JSON.parse(sessionStorage.localLogin)
       console.log(this.stuInfo)
     },
-    getGender(code) { //性别
+    getGender(code) { // 性别
       if (code === '1') return '男'
       if (code === '0') return '女'
       return '未知'
@@ -123,7 +119,7 @@ export default {
       this.$router.back()
     },
     isValid() {
-      let { stuname,login,phone,  remark, password, newPassword } = this.stuInfo
+      const { stuname, login, phone, remark, password, newPassword } = this.stuInfo
       if (!stuname) {
         Toast({
           message: '用户名不能为空',
@@ -229,18 +225,18 @@ export default {
         sex: this.stuInfo.sex,
         login: this.stuInfo.login
       }
-      params = qs.stringify(params)      
+      params = qs.stringify(params)
       // console.log(params)
       updateStudent(params)
-      .then(res => {
-        MyToast(res.data)
-          sessionStorage.localLogin=JSON.stringify(this.stuInfo);
-      })
+        .then(res => {
+          MyToast(res.data)
+          sessionStorage.localLogin = JSON.stringify(this.stuInfo)
+        })
       // modify(this.stuInfo).then(res => {
       //   MyToast(res.msg)
       // })
     }
-  },
+  }
   // created() {
   //   getUser().then(res => {
   //     if (res.success) {

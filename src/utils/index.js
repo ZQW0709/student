@@ -9,8 +9,8 @@ export function getInterval(dateString) {
   const _1hour = _1min * 60
   const _1day = _1hour * 24
 
-  let date = new Date(dateString)
-  let interval = Date.now() - date
+  const date = new Date(dateString)
+  const interval = Date.now() - date
   if (interval < _1min) {
     return Math.floor(interval / _1sec) + '秒前'
   }
@@ -27,14 +27,14 @@ export function getInterval(dateString) {
 }
 
 export const smoothScrollTo = (x = 0, y = 0, timeout = 300) => {
-  let fps = 50
-  let f = 10
-  let curTime = new Date().getTime()
+  const fps = 50
+  const f = 10
+  const curTime = new Date().getTime()
 
   return new Promise(resolve => {
-    let interval = window.setInterval(() => {
-      let dx = (x - window.scrollX) / f
-      let dy = (y - window.scrollY) / f
+    const interval = window.setInterval(() => {
+      const dx = (x - window.scrollX) / f
+      const dy = (y - window.scrollY) / f
 
       if (new Date().getTime() - curTime <= timeout) {
         window.scrollTo(window.scrollX + dx, window.scrollY + dy)
@@ -79,3 +79,4 @@ Date.prototype.format = function(fmt) {
   }
   return fmt
 }
+

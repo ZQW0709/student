@@ -1,16 +1,16 @@
 <template>
   <div class="app-footer">
     <router-link tag="div" class="tab-item" to="/homepage">
-      <i class="iconfont icon-shouyefill tab-link"></i>
+      <i class="iconfont icon-shouyefill tab-link"/>
     </router-link>
     <router-link tag="div" class="tab-item" to="/order-list">
-      <i class="iconfont icon-listview tab-link"></i>
+      <i class="iconfont icon-listview tab-link"/>
     </router-link>
     <router-link tag="div" class="tab-item" to="/problem">
-      <i class="iconfont icon-dati tab-link"></i>
+      <i class="iconfont icon-dati tab-link"/>
     </router-link>
     <router-link tag="div" class="tab-item" to="/user-info">
-      <i class="iconfont icon-gerenfill tab-link"></i>
+      <i class="iconfont icon-gerenfill tab-link"/>
     </router-link>
   </div>
 </template>

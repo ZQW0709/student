@@ -1,14 +1,15 @@
 import axios from 'axios'
 
 export function studentLogin(params) {  //学生登录
-  const url = 'http://192.168.0.151:9527/studentLogin'
+  // const url = 'http://192.168.0.151:9527/studentLogin'
+  const url = 'http://localhost:9527/studentLogin'
+
   return axios.post(url, params, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
   })
 }
-
 export function updateStudent(params) {  //修改学生信息
   const url = 'http://localhost:9527/updateStudent'
   return axios.post(url, params)

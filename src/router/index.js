@@ -10,6 +10,8 @@ import UserOrder from 'views/user-order'
 import ModifyInfo from 'views/modify-info'
 import Page404 from 'views/404'
 import Problem from 'views/Problem'
+// import Response from 'views/Problem/response'
+
 import Response from 'views/response'
 
 Vue.use(Router)
@@ -40,8 +42,7 @@ export default new Router({
       //   {
       //     path: '/response',
       //     name: 'response',
-      //     component:() => import('@/views/problem/response')
-
+      //     component:Response,
       //   },
       // ]
     },

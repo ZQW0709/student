@@ -18,6 +18,7 @@
       <app-footer class="main-footer"></app-footer>
     </template>
     <router-view></router-view>
+    <toast v-model="showPositionValue" type="warn" :time="800" is-show-mask text="请选择题目类型" position="middle"></toast>
   </div>
 </template>
 
@@ -28,10 +29,11 @@ import { XButton,Divider } from 'vux'
 
 import { getAllexamtype } from '@/api/problem'
 
-import Toast from '@/components/toast'
+// import Toast from '@/components/toast'
 import AppFooter from 'components/app-footer.vue'
 import { gender } from '@/constant'
 import loading from '@/assets/loading.gif'
+import { Toast } from 'vux'
 
 export default {
   name: 'userInfo',
@@ -41,13 +43,15 @@ export default {
       childView: false,
       stuInfo:{},
       options: [],
-        value: ''
+        value: '',
+        showPositionValue:false,
     }
   },
   components: {
     AppFooter,
     XButton,
-    Divider
+    Divider,
+    Toast
   },
   created(){
      getAllexamtype()
@@ -67,7 +71,19 @@ export default {
   methods: {
     response() {
       // console.log("????")
-      this.$router.push('/response')
+      console.log(this.value)
+      if(this.value.length == 0) {
+        this.showPositionValue = true
+        return
+      }
+      let params = {
+        examtypeid: this.value
+      }
+      // this.$router.push('/response',)
+      this.$router.push({
+        name:'response',
+        params: params
+      })
 
     },
     fetch() {

@@ -25,19 +25,19 @@
                     <th>{{item.createtime}}</th>
                     <th>{{item.grade}}%</th>
                     </tr>
-        <!-- <tbody>
-          <tr>
-            <td>Apple</td>
-            <td>$1.25</td>
-          </tr>
-          <tr>
-            <td>Banana</td>
-            <td>$1.20</td>
-          </tr>
-        </tbody> -->
         <tbody id="tbody">
 		 </tbody>
       </x-table>
+      <div class="block">
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage1"
+      :page-size="limit"
+      layout="total, prev, pager, next"
+      :total="total">
+    </el-pagination>
+  </div>
     </div>
 
 </template>
@@ -79,6 +79,8 @@ export default {
   name: 'userInfo',
   data() {
     return {
+      currentPage1: 5,
+      total:0,
       imgUrl: loading,
       childView: false,
       stuInfo: {},
@@ -129,6 +131,10 @@ export default {
     this.getStudentAnswer()
   },
   methods: {
+      handleCurrentChange(val) {
+        this.page = val
+        this.getStudentAnswer();
+      },
     getStudentAnswer() {
       let params = {
         page: this.page,
@@ -139,6 +145,7 @@ export default {
       selectStudentsanswer(params)
       .then(res => {
         const obj = res.data.data
+        this.total = res.data.count
         this.studentData = []
         for (let i = 0; i < obj.length; i++) {
           let tempData = {}
@@ -173,7 +180,9 @@ export default {
         return
       }
       let params = {
-        examtypeid: this.value
+        examtypeid: this.value,
+        studentid: this.studentid,
+        examinfoname: this.value
       }
       // this.$router.push('/response',)
       this.$router.push({

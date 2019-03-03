@@ -3,7 +3,7 @@
     <div class="examination-content">
       <h4 class="examination-title">考试标题</h4>
       <p class="examination-info">
-        <span>题量：9</span>
+        <span>题量{{problemNum}}</span>
         <span>总分：100</span>
         <span>合格：60</span>
         <span>答题时间：{{ duration }}</span>
@@ -74,14 +74,22 @@
         >提交试卷</x-button>
       </div>
     </div>
+    <div v-transfer-dom>
+      <confirm v-model="show"
+      title="操作提示"
+      @on-cancel="back"
+      @on-confirm="back">
+        <p style="text-align:center;">请返回重新选择哦</p>
+      </confirm>
+    </div>
     <!-- 提示弹窗  start-->
     <div v-transfer-dom>
       <confirm
         v-model="confirmShow"
         :cancel-text="readWrongText"
         :title="confirmTitle"
-        @on-cancel="onCancel"
-        @on-confirm="onConfirm"
+        @on-cancel="confirmShow =false"
+        @on-confirm="putAnswer"
       >
         <p style="text-align:center;">{{ confirmText }}</p>
       </confirm>
@@ -128,8 +136,13 @@ export default {
   },
   data() {
     return {
+      problemNum:0,
       examtypeid: '', // 题目类型ID
+      studentid:'',  //学生Id
+      examinfoname:'', //题目类型名
       alertShow: false,
+      show: false,
+      confirmNoProblem: false,
       alertTitle: '提示',
       alertText: '',
       alertType: 0,
@@ -174,17 +187,37 @@ export default {
     this.$nextTick(function() {
       this.updateTime()
     })
-    let params = this.$route.params
+    // let params = this.$route.params
+    this.examtypeid = this.$route.params.examtypeid
+    this.studentid = this.$route.params.studentid
+    this.examinfoname = this.$route.params.examinfoname
+    let params = {
+      examtypeid: this.examtypeid
+    }
+
+
     params = qs.stringify(params)
-    getExaminfoByTypeId(params)
+    getExaminfoByTypeId(params)    ////根据题目类别 到题库中随机抽取20道题进行考试
       .then(res => {
-        console.log(res.data)
+        this.problemNum = res.data.length
         const obj = res.data
         this.testList = []
+        if(res.data.length<=0) {
+          this.show = true
+          this.readWrongText = '当前类型下，没有题目'
+          this.confirmTitle = '提示'
+          return
+        }
         for (let i = 0; i < obj.length; i++) {
           const temp = {}
           temp.type = 2
           temp.title = obj[i].name
+          temp.examid = obj[i].id
+          temp.examtypeid = obj[i].examtypeid
+          temp.correctanswer = obj[i].correctanswer
+
+
+
           temp.options = []
           temp.options.push('A' + '\xa0\xa0\xa0' + obj[i].a)
           temp.options.push('B' + '\xa0\xa0\xa0' + obj[i].b)
@@ -198,6 +231,46 @@ export default {
     // this.examtypeid = this.$router
   },
   methods: {
+    putAnswer() {
+      console.log(this.testList)
+      let examid = this.testList[0].examid
+      let a,b,c,d
+      for(let i = 0;i<this.testList[0].userAnswer.length;i++) {
+        if(this.testList[0].userAnswer[i] == 0){
+          a = 1
+          b = 0
+          c = 0
+          d = 0
+        }
+        else if(this.testList[0].userAnswer[i] == 1) {
+          a = 0
+          b = 1
+          c = 0
+          d = 0
+        }
+        else if(this.testList[0].userAnswer[i] == 2) {
+          a = 0
+          b = 0
+          c = 1
+          d = 0
+        }
+        else {
+          a = 0
+          b = 0
+          c = 0
+          d = 1
+        }
+      }
+      let correctanswer = this.testList[0].correctanswer
+
+      let studentanswer
+      for(let i = 0;i<this.testList.length;i++) {
+
+      }
+    },
+    back() {
+      this.$router.back()
+    },
     isSelected(item, index) {
       if (item.type === 2) {
         if (!item.userAnswer) {
@@ -262,6 +335,10 @@ export default {
       var that = this,
         answerArr = [],
         answerLen
+        // Debug
+        // this.Debug
+        // Debug
+        // debugger
       this.testList.forEach(function(item, index) {
         if (item.userAnswer || item.userAnswer === 0) {
           if (item.type === 1 || item.type === 0) {

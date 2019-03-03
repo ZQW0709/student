@@ -4,6 +4,7 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const vuxLoader = require('vux-loader')
+
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -19,7 +20,7 @@ const createLintingRule = () => ({
   }
 })
 
-const webpackConfig = {
+module.exports = vuxLoader.merge({
   context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.js'
@@ -32,7 +33,7 @@ const webpackConfig = {
       : config.dev.assetsPublicPath
   },
   resolve: {
-    extensions: ['.js', '.vue', '.json','less'],
+    extensions: ['.js', '.vue', '.json'],
     alias: {
       '@': resolve('src'),
       'components': resolve('src/components'),
@@ -45,10 +46,6 @@ const webpackConfig = {
   module: {
     rules: [
       ...(config.dev.useEslint ? [createLintingRule()] : []),
-      {
-        test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
-        loader: 'file-loader'
-      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -86,22 +83,17 @@ const webpackConfig = {
     ]
   },
   node: {
-    // prevent webpack from injecting useless setImmediate polyfill because Vue
-    // source contains it (although only uses it if it's native).
     setImmediate: false,
-    // prevent webpack from injecting mocks to Node native modules
-    // that does not make sense for the client
     dgram: 'empty',
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
   }
-}
-
-module.exports = vuxLoader.merge(webpackConfig, {
+},
+{
   options: {},
   plugins: [{
     name: 'vux-ui'
   }]
-})
+}) 

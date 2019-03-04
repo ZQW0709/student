@@ -234,33 +234,48 @@ export default {
     putAnswer() {
       console.log(this.testList)
       let examid = this.testList[0].examid
-      let a,b,c,d
+      let a = 0,b = 0,c = 0,d = 0
       for(let i = 0;i<this.testList[0].userAnswer.length;i++) {
-        if(this.testList[0].userAnswer[i] == 0){
+        console.log(this.testList[0].userAnswer[i])
+        if(this.testList[0].userAnswer[i] == 0) {
           a = 1
-          b = 0
-          c = 0
-          d = 0
         }
         else if(this.testList[0].userAnswer[i] == 1) {
-          a = 0
-          b = 1
-          c = 0
-          d = 0
+          b = 1 
         }
         else if(this.testList[0].userAnswer[i] == 2) {
-          a = 0
-          b = 0
           c = 1
-          d = 0
         }
         else {
-          a = 0
-          b = 0
-          c = 0
           d = 1
         }
+        // if(this.testList[0].userAnswer[i] == 0){
+        //   a = 1
+        //   b = 0
+        //   c = 0
+        //   d = 0
+        // }
+        // else if(this.testList[0].userAnswer[i] == 1) {
+        //   a = 0
+        //   b = 1
+        //   c = 0
+        //   d = 0
+        // }
+        // else if(this.testList[0].userAnswer[i] == 2) {
+        //   a = 0
+        //   b = 0
+        //   c = 1
+        //   d = 0
+        // }
+        // else {
+        //   a = 0
+        //   b = 0
+        //   c = 0
+        //   d = 1
+        // }
       }
+        console.log(a,b,c,d)
+
       let correctanswer = this.testList[0].correctanswer
 
       let studentanswer

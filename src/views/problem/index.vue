@@ -79,7 +79,7 @@ export default {
   name: 'userInfo',
   data() {
     return {
-      currentPage1: 5,
+      currentPage1: 1,
       total:0,
       imgUrl: loading,
       childView: false,
@@ -166,7 +166,7 @@ export default {
           tempData.examinfoname = obj[i].examinfoname
           var time = obj[i].createtime
           var d = new Date(time)
-          tempData.createtime = obj[i].createtime
+          tempData.createtime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
           tempData.grade = obj[i].grade
           this.tableData6.push(tempData)
         }

@@ -113,7 +113,7 @@ import {
   Alert,
   TransferDomDirective as TransferDom
 } from 'vux'
-import { getExaminfoByTypeId } from '@/api/problem'
+import { getExaminfoByTypeId, addExamResult } from '@/api/problem'
 import qs from 'qs'
 Array.prototype.contains = function(obj) {
   var i = this.length
@@ -136,10 +136,10 @@ export default {
   },
   data() {
     return {
-      problemNum:0,
+      problemNum: 0,
       examtypeid: '', // 题目类型ID
-      studentid:'',  //学生Id
-      examinfoname:'', //题目类型名
+      studentid: '',  // 学生Id
+      examinfoname: '', // 题目类型名
       alertShow: false,
       show: false,
       confirmNoProblem: false,
@@ -195,14 +195,13 @@ export default {
       examtypeid: this.examtypeid
     }
 
-
     params = qs.stringify(params)
-    getExaminfoByTypeId(params)    ////根据题目类别 到题库中随机抽取20道题进行考试
+    getExaminfoByTypeId(params)    /// /根据题目类别 到题库中随机抽取20道题进行考试
       .then(res => {
         this.problemNum = res.data.length
         const obj = res.data
         this.testList = []
-        if(res.data.length<=0) {
+        if (res.data.length <= 0) {
           this.show = true
           this.readWrongText = '当前类型下，没有题目'
           this.confirmTitle = '提示'
@@ -215,8 +214,6 @@ export default {
           temp.examid = obj[i].id
           temp.examtypeid = obj[i].examtypeid
           temp.correctanswer = obj[i].correctanswer
-
-
 
           temp.options = []
           temp.options.push('A' + '\xa0\xa0\xa0' + obj[i].a)
@@ -232,56 +229,90 @@ export default {
   },
   methods: {
     putAnswer() {
-      console.log(this.testList)
       let examid = this.testList[0].examid
-      let a = 0,b = 0,c = 0,d = 0
-      for(let i = 0;i<this.testList[0].userAnswer.length;i++) {
-        console.log(this.testList[0].userAnswer[i])
-        if(this.testList[0].userAnswer[i] == 0) {
-          a = 1
+      let a = '0', b = '0', c = '0', d = '0'
+      for (let i = 0; i < this.testList[0].userAnswer.length; i++) {
+        if (this.testList[0].userAnswer[i] == 0) {
+          a = '1'
+        } else if (this.testList[0].userAnswer[i] == 1) {
+          b = '1'
+        } else if (this.testList[0].userAnswer[i] == 2) {
+          c = '1'
+        } else {
+          d = '1'
         }
-        else if(this.testList[0].userAnswer[i] == 1) {
-          b = 1 
-        }
-        else if(this.testList[0].userAnswer[i] == 2) {
-          c = 1
-        }
-        else {
-          d = 1
-        }
-        // if(this.testList[0].userAnswer[i] == 0){
-        //   a = 1
-        //   b = 0
-        //   c = 0
-        //   d = 0
-        // }
-        // else if(this.testList[0].userAnswer[i] == 1) {
-        //   a = 0
-        //   b = 1
-        //   c = 0
-        //   d = 0
-        // }
-        // else if(this.testList[0].userAnswer[i] == 2) {
-        //   a = 0
-        //   b = 0
-        //   c = 1
-        //   d = 0
-        // }
-        // else {
-        //   a = 0
-        //   b = 0
-        //   c = 0
-        //   d = 1
-        // }
       }
-        console.log(a,b,c,d)
-
       let correctanswer = this.testList[0].correctanswer
-
-      let studentanswer
-      for(let i = 0;i<this.testList.length;i++) {
-
+      let studentanswer = this.getStuAnswer(this.testList[0].userAnswer)
+      for (let i = 1; i < this.testList.length; i++) {
+        examid += ',' + this.testList[i].examid
+        correctanswer += ',' + this.testList[i].correctanswer
+        studentanswer += ',' + this.getStuAnswer(this.testList[i].userAnswer)
+        for (let j = 0; j < this.testList[i].userAnswer.length; j++) {
+        if (this.testList[i].userAnswer[j] == 0) {
+          a += ',1'
+        } else {
+          a += ',0'
+        }
+        if (this.testList[i].userAnswer[j] == 1) {
+          b += ',1'
+        } else {
+          b += ',0'
+        }
+        if (this.testList[i].userAnswer[j] == 2) {
+          c += ',1'
+        } else {
+          c += ',0'
+        }
+        if (this.testList[i].userAnswer[j] == 3) {
+          d += ',1'
+        } else {
+          d += ',0'
+        }
       }
+      }
+
+      let params = {
+        examid: examid,
+        a: a,
+        b: b,
+        c: c,
+        d: d,
+        correctanswer: correctanswer,
+        examtypeid: this.examtypeid,
+        studentid: this.studentid,
+        examinfoname: this.examinfoname,
+        studentanswer: studentanswer
+      }
+      params = qs.stringify(params)
+      addExamResult(params)
+      .then(res => {
+        console.log(res.data)
+      })
+    },
+    getStuAnswer(data) {
+      let temp = ''
+      if (data.contains(0)) {
+        temp = 'A'
+      } else {
+       temp = '0'
+      }
+      if (data.contains(1)) {
+        temp += 'B'
+      } else {
+        temp += '0'
+      }
+      if (data.contains(2)) {
+        temp += 'C'
+      } else {
+        temp += '0'
+      }
+      if (data.contains(3)) {
+        temp += 'C'
+      } else {
+        temp += '0'
+      }
+      return temp
     },
     back() {
       this.$router.back()

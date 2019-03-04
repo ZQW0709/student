@@ -80,7 +80,7 @@ export default {
   data() {
     return {
       currentPage1: 1,
-      total:0,
+      total: 0,
       imgUrl: loading,
       childView: false,
       stuInfo: {},
@@ -133,7 +133,7 @@ export default {
   methods: {
       handleCurrentChange(val) {
         this.page = val
-        this.getStudentAnswer();
+        this.getStudentAnswer()
       },
     getStudentAnswer() {
       let params = {

@@ -26,3 +26,12 @@ export function selectStudentsanswer(params) { // 获取学生回答过的题目
     }
   })
 }
+
+export function addExamResult(params) { // 提交学生的答题
+  const url = 'http://localhost:9527/addExamResult'
+  return axios.post(url, params, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+}

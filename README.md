@@ -1,7 +1,4 @@
-# yuexue-frontend 约学前端项目
-
-## 技术栈
-## Vue2 vue-router Webpack axios sass MintUI Iconfont
+## Vue2 vue-router Webpack axios sass MintUI Iconfont vux
 
 ## 项目结构
 ```c

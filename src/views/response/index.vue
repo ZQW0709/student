@@ -8,6 +8,7 @@
         <span>合格：60</span>
         <span>答题时间：{{ duration }}</span>
       </p>
+      <p v-if="isEnd"><span>题目类型是：[{{this.examinfoname}}]</span>  <span>正确率是：[{{this.grade}}]%</span></p>
       <ul class="examination-question-list">
         <li
           v-for="(items,num) in testList"
@@ -41,6 +42,8 @@
                 v-for="(item, index) in items.options"
                 :key="index"
               >{{ item }}</p>
+              <span v-if="isEnd">正确的答案是{{items.correctanswer}}</span>
+              <span v-if="isEnd">解释{{items.explaininfo}}</span>
             </div>
             <div class="check-content">
               <span
@@ -64,13 +67,15 @@
           class="num-item"
           @click="selectIndex(index)"
         >{{ index + 1 }}</a>
+
       </div>
       <div class="cutdown-content">
-        <span class="cutdown-text">剩余时间：<span class="red">{{ rest }}</span></span>
+        <span class="cutdown-text" v-if="!isEnd">剩余时间：<span class="red">{{ rest }}</span></span>
         <x-button
           mini
           class="examination-submit-btn"
           @click.native="submitAnswer"
+          v-if="!isEnd"
         >提交试卷</x-button>
       </div>
     </div>
@@ -136,6 +141,8 @@ export default {
   },
   data() {
     return {
+      isEnd: false, // 是否提交了答案
+      grade: '',   // 正确率
       problemNum: 0,
       examtypeid: '', // 题目类型ID
       studentid: '',  // 学生Id
@@ -188,6 +195,7 @@ export default {
       this.updateTime()
     })
     // let params = this.$route.params
+    console.log(this.$route.params)
     this.examtypeid = this.$route.params.examtypeid
     this.studentid = this.$route.params.studentid
     this.examinfoname = this.$route.params.examinfoname
@@ -214,6 +222,7 @@ export default {
           temp.examid = obj[i].id
           temp.examtypeid = obj[i].examtypeid
           temp.correctanswer = obj[i].correctanswer
+          temp.explaininfo = obj[i].explaininfo
 
           temp.options = []
           temp.options.push('A' + '\xa0\xa0\xa0' + obj[i].a)
@@ -229,6 +238,7 @@ export default {
   },
   methods: {
     putAnswer() {
+      console.log(this.testList)
       let examid = this.testList[0].examid
       let a = '0', b = '0', c = '0', d = '0'
       for (let i = 0; i < this.testList[0].userAnswer.length; i++) {
@@ -238,17 +248,20 @@ export default {
           b = '1'
         } else if (this.testList[0].userAnswer[i] == 2) {
           c = '1'
-        } else {
+        } else  if (this.testList[0].userAnswer[i] == 3) {
           d = '1'
         }
       }
+
       let correctanswer = this.testList[0].correctanswer
-      let studentanswer = this.getStuAnswer(this.testList[0].userAnswer)
+      let studentanswer
+      studentanswer = this.getStuAnswer(this.testList[0].userAnswer)
+
       for (let i = 1; i < this.testList.length; i++) {
         examid += ',' + this.testList[i].examid
         correctanswer += ',' + this.testList[i].correctanswer
         studentanswer += ',' + this.getStuAnswer(this.testList[i].userAnswer)
-        for (let j = 0; j < this.testList[i].userAnswer.length; j++) {
+         for (let j = 0; j < this.testList[i].userAnswer.length; j++) {
         if (this.testList[i].userAnswer[j] == 0) {
           a += ',1'
         } else {
@@ -284,10 +297,13 @@ export default {
         examinfoname: this.examinfoname,
         studentanswer: studentanswer
       }
+      console.log(params)
       params = qs.stringify(params)
       addExamResult(params)
       .then(res => {
-        console.log(res.data)
+        // console.log(res.data)
+        this.isEnd = true
+        this.grade = res.data.grade
       })
     },
     getStuAnswer(data) {
@@ -345,11 +361,12 @@ export default {
       }
       return false
     },
-    selectOption(item, num, index) {
-      this.currentIndex = num
+    selectOption(item, num, index) {   // item是一个对象、num是题号、index对应1234对应ABCD
+      console.log(item, num, index)
+      this.currentIndex = num   // 将题号赋予currentIndex
       if (item.type === 2) {
-        var userAnswer = this.testList[this.currentIndex].userAnswer
-        if (!userAnswer) {
+        var userAnswer = this.testList[this.currentIndex].userAnswer   // 获取学生对该题的回答
+        if (!userAnswer) {   // 表示没有回答
           userAnswer = []
         }
         if (userAnswer.contains(index)) {

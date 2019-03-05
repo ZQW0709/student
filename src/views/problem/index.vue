@@ -30,7 +30,6 @@
       </x-table>
       <div class="block">
     <el-pagination
-      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage1"
       :page-size="limit"
@@ -46,7 +45,7 @@
       </mt-header>
       <template>
         <divider>请选择题目类型开始答题</divider>
-  <span><el-select v-model="value" filterable placeholder="请选择">
+  <span><el-select v-model="value" filterable placeholder="请选择" @change="changeLocationValue">
     <el-option
       v-for="item in options"
       :key="item.value"
@@ -95,6 +94,7 @@ export default {
       studentData: [
         { calculation: '正确率', examinfoname: '1750',  percent: 0.24511278195488723 }
       ],
+      examinfoname: '',
       tableData6: [],
       page: 1,
       limit: 8,
@@ -131,6 +131,13 @@ export default {
     this.getStudentAnswer()
   },
   methods: {
+    changeLocationValue(val) {
+            let obj = {}
+            obj = this.options.find((item) => {
+                return item.value === val
+            })
+            this.examinfoname = obj.label
+        },
       handleCurrentChange(val) {
         this.page = val
         this.getStudentAnswer()
@@ -182,9 +189,8 @@ export default {
       let params = {
         examtypeid: this.value,
         studentid: this.studentid,
-        examinfoname: this.value
+        examinfoname: this.examinfoname
       }
-      // this.$router.push('/response',)
       this.$router.push({
         name: 'response',
         params: params

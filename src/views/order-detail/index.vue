@@ -1,7 +1,7 @@
 <template>
   <div class="order-detail">
     <div class="order-content">
-      <mt-header fixed title="邀约详情">
+      <mt-header fixed title="实时答题">
         <mt-button slot="left" icon="back" @click="back()"/>
       </mt-header>
       <div class="content">
@@ -321,4 +321,6 @@ export default {
       }
     }
   }
+  
+  
 </style>

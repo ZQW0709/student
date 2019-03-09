@@ -35,3 +35,12 @@ export function addExamResult(params) { // 提交学生的答题
     }
   })
 }
+
+export function addRealtimeanswer(params) {  // 添加实时答题
+  const url = 'http://localhost:9527/addRealtimeanswer'
+  return axios.post(url, params, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+}

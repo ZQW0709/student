@@ -430,7 +430,7 @@ export default {
       this.timer = setInterval(function() {
         time = time - 1
         that.endTime = time
-        if (time === 0) {
+        if (time === 0 && !this.isEnd) {
           clearInterval(that.timer)
           that.alertShow = !this.alertShow
           that.alertType = 1

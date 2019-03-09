@@ -69,16 +69,13 @@
           <checker v-model="demo21" type="checkbox" default-item-class="demo1-item" selected-item-class="demo1-item-selected">
         <checker-item :value="item" v-for="(item, index) in items1" :key="index">{{item.value}}</checker-item>
       </checker>
-    <x-button type="primary">提交答案</x-button>
+    <x-button type="primary" @click.native="sbumitAnswer()">提交答案</x-button>
   </div>
 
         <div class="opt">
-      
-      </div>
-        
-        
 
-       
+      </div>
+
       </div>
         <div @click="showHideOnBlur=false">
           <span class="vux-close"></span>
@@ -99,7 +96,10 @@ import Toast from '@/components/toast'
 import AppFooter from 'components/app-footer.vue'
 import { getInterval, smoothScrollTo } from '@/utils'
 import { province, city } from '@/utils/cityData'
-import { XDialog,XButton,Checker, CheckerItem } from 'vux'
+import { XDialog, XButton, Checker, CheckerItem } from 'vux'
+
+import { addRealtimeanswer } from '@/api/problem'
+import qs from 'qs'
 
 export default {
   components: {
@@ -112,9 +112,9 @@ export default {
   data() {
     return {
         stuInfo: {},
-        nickName:'',
-        showHideOnBlur:false,
-        order:{},
+        nickName: '',
+        showHideOnBlur: false,
+        order: {},
          items1: [{
         key: '1',
         value: 'A'
@@ -131,7 +131,7 @@ export default {
       }],
       demo21: null,
         checkboxGroup1: [],
-        cities:['A', 'B', 'C', 'D'],
+        cities: ['A', 'B', 'C', 'D'],
       demo21: null,
       orderList: [],
       search: '',
@@ -200,6 +200,42 @@ export default {
     this.webSocket.close()
   },
   methods: {
+    sbumitAnswer() {
+      console.log(this.order)
+      console.log(this.demo21)
+      console.log(this.order.correctanswer)
+      //! 判断学生是否答对了
+      let istrue = 1
+      let studentanswer = ''
+      if (this.order.correctanswer.length != this.demo21.length) {
+        istrue = 0
+      }
+      for (let i = 0; i < this.demo21.length; i++) {
+        studentanswer += this.demo21[i].value
+        // console.log(this.order.correctanswer.indexOf(this.demo21[i].value))
+        if (this.order.correctanswer.indexOf(this.demo21[i].value)  == -1) {
+          istrue = 0
+        }
+      }
+      this.showHideOnBlur = false
+      let params = {
+        studentid: this.stuInfo.id,
+        examtypeid: this.order.examtypeid,
+        examinfoid: this.order.id,
+        examtypename: this.order.examtypename,
+        examtypeinfo: this.order.name,
+        studentname: this.stuInfo.stuname,
+        correctanswer: this.order.correctanswer,
+        studentlogin: this.stuInfo.login,
+        studentanswer: studentanswer,
+        istrue: istrue
+      }
+      params = qs.stringify(params)
+      addRealtimeanswer(params)
+      .then(res => {
+        console.log(res.data)
+      })
+    },
       initWebSocket() { //* 初始化websocket连接
       this.webSocket.onopen = this.webSocketOpen
       this.webSocket.onmessage = this.webSocketMessage
@@ -235,7 +271,7 @@ export default {
           type: 'error'
         })
       } else if (message.type === 'showUser') {
-        vm.userList = message.nickName 
+        vm.userList = message.nickName
       } else {
         vm.orderList.push(message)
       }
@@ -259,15 +295,12 @@ export default {
       // message.sendType = 'sendMsg'
       // message.nickName = stuInfo.stuname
       // this.finalSend(JSON.stringify(message))
-    
     },
     finalSend(message) { //* 使用websocket发送
       this.webSocket.send(message)
     },
 
-
-
-    //TODO 别人的代码 先放着
+    // TODO 别人的代码 先放着
     onValuesChange(picker, values) {
       if (values[0] === '全部') {
         picker.setSlotValues(1, [])
@@ -290,7 +323,7 @@ export default {
     },
     goDetail(item) {
       console.log(item)
-      console.log("???")
+      console.log('???')
       this.order = item
       this.showHideOnBlur = true
       // this.$router.push(`/order-list/order-detail/`)

@@ -321,6 +321,5 @@ export default {
       }
     }
   }
-  
-  
+
 </style>

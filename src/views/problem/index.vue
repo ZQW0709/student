@@ -125,7 +125,9 @@ export default {
         let tempList = {}
         tempList.value = obj[i].id
         tempList.label = obj[i].name
+        if (obj[i].status === 1) {
         this.options.push(tempList)
+        }
       }
     })
     this.getStudentAnswer()
